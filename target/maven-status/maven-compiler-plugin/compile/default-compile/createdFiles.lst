@@ -1,8 +1,0 @@
-com\game\login\LoginManager.class
-com\game\ui\BlackjackUI.class
-com\game\GameManager.class
-com\game\model\BlackjackGame.class
-com\game\model\SnakeGame.class
-com\game\ui\SnakeUI.class
-module-info.class
-com\game\GameManagerController.class

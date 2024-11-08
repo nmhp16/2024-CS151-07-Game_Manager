@@ -1,4 +1,2 @@
-aaron,1000,Blackjack
-aaron,1000,Snake
-admin,1000,Blackjack
-admin,1000,Snake
+default,1000,Snake
+default,1000,Blackjack
