@@ -32,8 +32,8 @@ public class LoginManager {
 
                 if (parts.length == 2) {
                     String username = parts[0];
-                    String password = parts[1];
-                    accounts.put(username, password);
+                    String hashedPassword = parts[1]; // Store hashed password
+                    accounts.put(username, hashedPassword);
                 }
             }
         } catch (IOException e) {
@@ -55,7 +55,11 @@ public class LoginManager {
         if (accounts.containsKey(username)) {
             return false;
         }
-        accounts.put(username, password);
+
+        // Hash password before storing it
+        String hashedPassword = PasswordHasher.hashPassword(password);
+
+        accounts.put(username, hashedPassword);
         highScoresManager.createDefaultScores(accounts);
         saveAccounts();
         return true;
@@ -73,9 +77,9 @@ public class LoginManager {
         // Check if username exist in Map
         if (accounts.containsKey(username)) {
             // Retrieve password
-            String storedPassword = accounts.get(username);
+            String storedHash = accounts.get(username);
 
-            if (storedPassword.equals(password)) {
+            if (PasswordHasher.verifyPassword(storedHash, password)) {
                 return true; // Match
             }
         }
