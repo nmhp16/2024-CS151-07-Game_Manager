@@ -1,1 +1,1 @@
-# 2024-CS151-07-Game_Manager
+# Game Manager
