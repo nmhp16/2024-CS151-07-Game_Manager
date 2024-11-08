@@ -1,0 +1,20 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "java",
+            "name": "GameManager",
+            "request": "launch",
+            "mainClass": "com.game/com.game.GameManager",
+            "projectName": ""
+        },
+        {
+            "type": "java",
+            "name": "Launch Game Manager",
+            "request": "launch",
+            "mainClass": "com.game.GameManager",
+            "projectName": "2024-CS151-07-Game_Manager"
+        }
+    ]
+  }
+  
