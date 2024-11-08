@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class LoginManager {
+    private HighScoresManager highScoresManager = new HighScoresManager();
     private Map<String, String> accounts = new HashMap<>();
 
     /**
@@ -16,6 +17,7 @@ public class LoginManager {
      */
     public LoginManager() {
         loadAccounts();
+        highScoresManager.createDefaultScores(accounts);
     }
 
     /**
@@ -34,10 +36,10 @@ public class LoginManager {
                     accounts.put(username, password);
                 }
             }
-            System.out.println(accounts.get(line));
         } catch (IOException e) {
             System.out.println("Error loading accounts: " + e.getMessage());
         }
+
     }
 
     /**
@@ -54,6 +56,7 @@ public class LoginManager {
             return false;
         }
         accounts.put(username, password);
+        highScoresManager.createDefaultScores(accounts);
         saveAccounts();
         return true;
     }
@@ -91,5 +94,16 @@ public class LoginManager {
         } catch (IOException e) {
             System.out.println("Error saving accounts: " + e.getMessage());
         }
+    }
+
+    // Getters
+    public Map<String, String> getAccounts() {
+        return accounts;
+    }
+
+    // Setters
+    public void addAccount(String username, String password) {
+        accounts.put(username, password);
+        saveAccounts();
     }
 }
