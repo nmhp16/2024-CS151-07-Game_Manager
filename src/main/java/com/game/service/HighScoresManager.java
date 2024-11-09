@@ -7,8 +7,12 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -155,5 +159,28 @@ public class HighScoresManager {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public List<HighScore> getTopScores(String gameName, int limit) {
+        List<HighScore> allScores = new ArrayList<>();
+
+        for (Set<HighScore> scores : highScores.values()) {
+            for (HighScore score : scores) {
+                if (score.getGamename().equals(gameName)) {
+                    allScores.add(score);
+                }
+            }
+        }
+
+        // Sort by score value
+        Collections.sort(allScores, new Comparator<HighScore>() {
+            @Override
+            public int compare(HighScore s1, HighScore s2) {
+                return Integer.compare(s2.getScore(), s1.getScore());
+            }
+        });
+
+        // Return top 5 scores
+        return allScores.subList(0, Math.min(limit, allScores.size()));
     }
 }
