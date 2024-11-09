@@ -1,4 +1,4 @@
-package com.game.service;
+package com.game.model;
 
 public class HighScore {
     private String username;

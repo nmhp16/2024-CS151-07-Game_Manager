@@ -12,6 +12,8 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import com.game.model.HighScore;
+
 public class HighScoresManager {
     private Map<String, Set<HighScore>> highScores; // Map of usernames and set of high scores
 
