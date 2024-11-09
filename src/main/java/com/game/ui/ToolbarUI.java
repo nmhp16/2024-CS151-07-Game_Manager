@@ -2,7 +2,6 @@ package com.game.ui;
 
 import com.game.GameManagerController;
 
-import javafx.geometry.Insets;
 import javafx.scene.control.Button;
 import javafx.scene.layout.HBox;
 import javafx.scene.text.Font;
