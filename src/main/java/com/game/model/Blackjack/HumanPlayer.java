@@ -7,5 +7,7 @@ public class HumanPlayer extends Player {
 
     @Override
     public void takeTurn(Deck deck) {
+        Card card = deck.drawCard();
+        addCard(card);
     }
 }

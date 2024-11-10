@@ -30,7 +30,6 @@ public class GameManagerController {
     private Stage stage;
     private LoginManager loginManager = new LoginManager();
     private ToolbarUI toolbar;
-    private String username;
 
     public GameManagerController(Stage stage) {
         this.stage = stage;
@@ -48,7 +47,6 @@ public class GameManagerController {
      * Method to handle login event
      */
     public void handleLogin(String username, String password) {
-        this.username = username;
 
         if (loginManager.login(username, password)) {
             showMainMenu(stage);
@@ -82,6 +80,10 @@ public class GameManagerController {
 
         // Add toolbar to main menu
         mainMenu.getChildren().add(toolbar);
+
+        AnchorPane.setTopAnchor(toolbar, 0.0);
+        AnchorPane.setLeftAnchor(toolbar, 0.0);
+        AnchorPane.setRightAnchor(toolbar, 0.0);
 
         // Add element to AnchorPane
         VBox vbox = new VBox();
@@ -195,7 +197,7 @@ public class GameManagerController {
 
         // Event handler for "Play Blackjack" button
         playBlackjackButton.setOnAction(event -> {
-            BlackjackUI blackjackGame = new BlackjackUI(username);
+            BlackjackUI blackjackGame = new BlackjackUI();
             blackjackGame.start(stage);
         });
 

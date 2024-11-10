@@ -3,17 +3,15 @@ package com.game.ui;
 import com.game.GameManagerController;
 
 import javafx.scene.control.Button;
-import javafx.scene.layout.HBox;
+import javafx.scene.control.ToolBar;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
-public class ToolbarUI extends HBox {
+public class ToolbarUI extends ToolBar {
     private Button mainMenuButton;
     private Button signOutButton;
 
     public ToolbarUI(GameManagerController controller, Stage stage) {
-        // Toolbar HBox setting
-        this.setSpacing(8);
 
         // Create "Sign Out" button
         signOutButton = new Button("Sign Out");
@@ -21,7 +19,7 @@ public class ToolbarUI extends HBox {
 
         // Add "Sign Out" button to toolbar
         signOutButton.setFont(new Font("Georgia", 20));
-        this.getChildren().add(signOutButton);
+        this.getItems().add(signOutButton);
 
         // Create "Main Menu" button
         mainMenuButton = new Button("Main menu");
@@ -29,7 +27,9 @@ public class ToolbarUI extends HBox {
 
         // Add "Main Menu" button to toolbar
         mainMenuButton.setFont(new Font("Georgia", 20));
-        this.getChildren().add(mainMenuButton);
+        this.getItems().add(mainMenuButton);
+
+        this.setPrefHeight(30);
 
     }
 }

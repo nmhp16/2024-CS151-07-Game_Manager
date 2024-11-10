@@ -1,8 +1,11 @@
 package com.game.ui;
 
+import java.util.List;
+
 import com.game.GameManagerController;
 import com.game.model.Blackjack.BlackjackGame;
 import com.game.model.Blackjack.Card;
+import com.game.model.Blackjack.HumanPlayer;
 
 import javafx.application.Application;
 import javafx.geometry.Insets;
@@ -12,6 +15,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
@@ -24,21 +28,11 @@ public class BlackjackUI extends Application {
     private BlackjackGame game;
     private GameManagerController gameManagerController;
     private ToolbarUI toolbar;
-    private String username;
-
-    /**
-     * Overloaded Constructor
-     * 
-     * @param username Username
-     */
-    public BlackjackUI(String username) {
-        this.username = username;
-    }
 
     @Override
     public void start(Stage primaryStage) {
         gameManagerController = new GameManagerController(primaryStage);
-        game = new BlackjackGame(username);
+        game = new BlackjackGame();
         toolbar = new ToolbarUI(gameManagerController, primaryStage);
 
         // Main root
@@ -112,40 +106,219 @@ public class BlackjackUI extends Application {
         Label player2BalanceLabel = new Label("Player 2's Balance: $" + game.getPlayer2().getBalance());
         player2BalanceLabel.setFont(new Font("Georgia", 20));
 
-        Label dealerBalanceLabel = new Label("Dealer Balance: $" + game.getDealer().getBalance());
-        dealerBalanceLabel.setFont(new Font("Georgia", 20));
-
         // Create a VBox to hold the labels
-        VBox balanceBox = new VBox(10);
-        balanceBox.setAlignment(Pos.CENTER);
-        balanceBox.getChildren().addAll(turnLabel, userBalanceLabel, player1BalanceLabel, player2BalanceLabel,
-                dealerBalanceLabel);
+        BorderPane gameBox = new BorderPane();
+        BorderPane playerInfo = new BorderPane();
+        playerInfo.setPadding(new Insets(20));
+
+        // VBox for each player
+        VBox userBox = new VBox(10);
+        VBox player1Box = new VBox(10);
+        VBox player2Box = new VBox(10);
+        VBox dealerBox = new VBox(10);
+
+        // Align each player VBox Center
+        userBox.setAlignment(Pos.CENTER);
+        player1Box.setAlignment(Pos.CENTER);
+        player2Box.setAlignment(Pos.CENTER);
+        dealerBox.setAlignment(Pos.CENTER);
+
+        // Add balance to each user VBox
+        userBox.getChildren().add(userBalanceLabel);
+        player1Box.getChildren().add(player1BalanceLabel);
+        player2Box.getChildren().add(player2BalanceLabel);
+
+        // Highlight current player VBox
+        highlightPlayerBox(game, dealerBox, userBox, player1Box, player2Box);
+
+        // Add dealer player name
+        Label dealerLabel = new Label("Dealer");
+        dealerLabel.setFont(new Font("Georgia", 20));
+        dealerBox.getChildren().add(dealerLabel);
 
         // Display cards
-        updateCardsDisplay(balanceBox);
+        updateCardsDisplay(dealerBox, userBox, player1Box, player2Box);
+
+        // Set each player box to BorderPane
+        playerInfo.setBottom(userBox);
+        playerInfo.setRight(player1Box);
+        playerInfo.setLeft(player2Box);
+        playerInfo.setTop(dealerBox);
+
+        // Elements to BorderPane gameBox
+        gameBox.setCenter(playerInfo); // Player session
+
+        // HBox for game action
+        HBox gameActionBox = new HBox(30);
+        gameActionBox.setAlignment(Pos.CENTER);
+
+        HBox turnAndAction = new HBox(20);
+        turnAndAction.getChildren().add(turnLabel); // Add turn indicator
+
+        // Show User Action Box if user turn
+        if (game.getCurrentPlayer() == game.getHumanPlayer()) {
+            userAction(gameActionBox, stage, game);
+        }
+
+        // Add action box to turn and action box
+        turnAndAction.getChildren().add(gameActionBox);
+
+        // Set gameActionBox, at the bottom of game screen
+        gameBox.setBottom(turnAndAction);
 
         // Set up the main layout
         AnchorPane blackjackGame = new AnchorPane();
-        AnchorPane.setTopAnchor(balanceBox, 20.0);
-        AnchorPane.setLeftAnchor(balanceBox, 20.0);
-        AnchorPane.setRightAnchor(balanceBox, 20.0);
-        AnchorPane.setBottomAnchor(balanceBox, 20.0);
+        AnchorPane.setTopAnchor(gameBox, 20.0);
+        AnchorPane.setLeftAnchor(gameBox, 20.0);
+        AnchorPane.setRightAnchor(gameBox, 20.0);
+        AnchorPane.setBottomAnchor(gameBox, 20.0);
 
         // Add balanceBox to the layout
-        blackjackGame.getChildren().add(balanceBox);
+        blackjackGame.getChildren().add(gameBox);
 
         // Set the new scene and show it
-        Scene newScene = new Scene(blackjackGame, 600, 400);
+        Scene newScene = new Scene(blackjackGame, 900, 600);
         stage.setScene(newScene);
         stage.show();
+
     }
 
-    private void updateCardsDisplay(VBox balanceBox) {
-        // Create labels or images for the cards in the player's hand
+    /**
+     * Helper method to handle user available action
+     * 
+     * @param gameActionBox HBox of game action
+     */
+    private void userAction(HBox gameActionBox, Stage stage, BlackjackGame game) {
+
+        // Add "Hit" Button for user
+        Button hitButton = new Button("Hit");
+        hitButton.setFont(new Font("Georgia", 20));
+        hitButton.setPrefWidth(100);
+
+        // Add "Stand" button for user
+        Button standButton = new Button("Stand");
+        standButton.setFont(new Font("Georgia", 20));
+        standButton.setPrefWidth(100);
+
+        // Betting option
+        Label betLabel = new Label("Bet:");
+        betLabel.setFont(new Font("Georgia", 20));
+
+        HBox betBox = new HBox(10);
+        Button bet1 = new Button("$1");
+        bet1.setFont(new Font("Georgia", 20));
+        bet1.setPrefWidth(70);
+
+        Button bet5 = new Button("$5");
+        bet5.setFont(new Font("Georgia", 20));
+        bet5.setPrefWidth(70);
+
+        Button bet25 = new Button("$25");
+        bet25.setFont(new Font("Georgia", 20));
+        bet25.setPrefWidth(70);
+
+        Button bet50 = new Button("$50");
+        bet50.setFont(new Font("Georgia", 20));
+        bet50.setPrefWidth(70);
+
+        bet1.setOnAction(event -> game.getHumanPlayer().setBet(1));
+        bet5.setOnAction(event -> game.getHumanPlayer().setBet(5));
+        bet25.setOnAction(event -> game.getHumanPlayer().setBet(25));
+        bet50.setOnAction(event -> game.getHumanPlayer().setBet(50));
+
+        betBox.getChildren().addAll(betLabel, bet1, bet5, bet25, bet50);
+
+        // Add button to game action HBox
+        gameActionBox.getChildren().addAll(hitButton, standButton, betBox);
+
+        // Event handler for "Hit"
+        hitButton.setOnAction(event -> {
+            HumanPlayer user = (HumanPlayer) game.getHumanPlayer();
+
+            // Check if user busted
+            if (user.calculateHandValue() > 21) {
+                gameManagerController.showAlert("Busted!", "You have gone over 21!");
+                updateUI(stage);
+
+            } else {
+                user.takeTurn(game.getDeck());
+                updateUI(stage);
+            }
+        });
+
+        // Event handler for "Stand"
+        standButton.setOnAction(event -> {
+            // User don't take turn, skip to next turn
+            game.nextTurn();
+            updateUI(stage);
+        });
+
+    }
+
+    /**
+     * Helper method to highlight current player VBox
+     * 
+     * @param game       Instance of Blackjack game
+     * @param dealerBox  Dealer VBox
+     * @param userBox    User VBox
+     * @param player1Box Player 1 VBox
+     * @param player2Box Player 2 VBox
+     */
+    private void highlightPlayerBox(BlackjackGame game, VBox dealerBox, VBox userBox, VBox player1Box,
+            VBox player2Box) {
+
+        // Reset all box styles
+        resetBoxStyles(dealerBox, userBox, player1Box, player2Box);
+
+        // Highlight the appropriate player's box based on whose turn it is
+        if (game.getCurrentPlayer() == game.getHumanPlayer()) {
+            highlightBox(userBox); // Highlight user’s box if it’s their turn
+
+        } else if (game.getCurrentPlayer() == game.getPlayer1()) {
+            highlightBox(player1Box); // Highlight player 1’s box if it’s their turn
+
+        } else if (game.getCurrentPlayer() == game.getPlayer2()) {
+            highlightBox(player2Box); // Highlight player 2’s box if it’s their turn
+
+        } else if (game.getCurrentPlayer() == game.getDealer()) {
+            highlightBox(dealerBox); // Highlight dealer’s box if it’s their turn
+        }
+
+    }
+
+    /**
+     * Helper method to reset the styles of all boxes
+     */
+    private void resetBoxStyles(VBox... boxes) {
+
+        for (VBox box : boxes) {
+            box.setStyle(""); // Reset style for all boxes
+        }
+    }
+
+    /**
+     * Helper method to highlight a specific box with a border
+     * 
+     * @param box VBox to highlight
+     */
+    private void highlightBox(VBox box) {
+        box.setStyle("-fx-border-color: blue; -fx-border-width: 3px;"); // Set blue border to highlight the box
+    }
+
+    /**
+     * Method to display player card
+     * 
+     * @param dealerBox  VBox info for dealer
+     * @param userBox    VBox info for user
+     * @param player1Box VBox info for player 1
+     * @param player2Box VBox info for player 2
+     */
+    private void updateCardsDisplay(VBox dealerBox, VBox userBox, VBox player1Box, VBox player2Box) {
+        // Create labels or images for the cards in the user's hand
         HBox playerCardsBox = new HBox(10);
         playerCardsBox.setAlignment(Pos.CENTER);
 
-        for (Card card : game.getCurrentPlayer().getHand()) {
+        for (Card card : game.getHumanPlayer().getHand()) {
             // Displaying card name as an example
             Label cardLabel = new Label(card.toString());
             cardLabel.setFont(new Font("Georgia", 20));
@@ -156,11 +329,15 @@ public class BlackjackUI extends Application {
         HBox dealerCardsBox = new HBox(10);
         dealerCardsBox.setAlignment(Pos.CENTER);
 
-        for (Card card : game.getDealer().getHand()) {
-            Label cardLabel = new Label(card.toString());
-            cardLabel.setFont(new Font("Georgia", 20));
-            dealerCardsBox.getChildren().add(cardLabel);
-        }
+        List<Card> dealerHand = game.getDealer().getHand();
+        Label firstCardLabel = new Label(dealerHand.get(0).toString());
+        firstCardLabel.setFont(new Font("Georgia", 20));
+        dealerCardsBox.getChildren().add(firstCardLabel);
+
+        // Hide the second card until round end
+        Label hiddenCard = new Label("?");
+        hiddenCard.setFont(new Font("Georgia", 20));
+        dealerCardsBox.getChildren().add(hiddenCard);
 
         // Create labels or images for the cards in the player1's hand
         HBox player1CardsBox = new HBox(10);
@@ -182,12 +359,11 @@ public class BlackjackUI extends Application {
             player2CardsBox.getChildren().add(cardLabel);
         }
 
-        // Add the card displays to the balanceBox or create a new VBox for them
-        VBox gameDetailsBox = new VBox(20);
-        gameDetailsBox.setAlignment(Pos.CENTER);
-        gameDetailsBox.getChildren().addAll(playerCardsBox, dealerCardsBox, player1CardsBox, player2CardsBox);
+        userBox.getChildren().add(playerCardsBox);
+        player1Box.getChildren().add(player1CardsBox);
+        player2Box.getChildren().add(player2CardsBox);
+        dealerBox.getChildren().add(dealerCardsBox);
 
-        balanceBox.getChildren().add(gameDetailsBox);
     }
 
     /**
@@ -233,7 +409,7 @@ public class BlackjackUI extends Application {
         cancelButton.setPrefWidth(100);
         // Event handler for "Cancel" button
         cancelButton.setOnAction(event -> {
-            BlackjackUI blackjackGame = new BlackjackUI(username);
+            BlackjackUI blackjackGame = new BlackjackUI();
             blackjackGame.start(stage);
         });
 

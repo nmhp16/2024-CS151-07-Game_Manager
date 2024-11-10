@@ -15,43 +15,13 @@ public class BlackjackGame {
      * 
      * @param username Username from JavaFX
      */
-    public BlackjackGame(String username) {
+    public BlackjackGame() {
         this.deck = new Deck();
-        this.humanPlayer = new HumanPlayer(username);
+        this.humanPlayer = new HumanPlayer("You");
         this.player1 = new ComputerPlayer("Player 1");
         this.player2 = new ComputerPlayer("Player 2");
         this.dealer = new Dealer();
         this.turn = "You";
-    }
-
-    public void playRound() {
-
-        while (!turn.equals("Dealer")) {
-
-            Player currentPlayer = getCurrentPlayer();
-
-            // Handle human turn
-            if (currentPlayer instanceof HumanPlayer) {
-                ((HumanPlayer) currentPlayer).takeTurn(deck);
-            }
-
-            // Handle player 1 and 2 turn
-            else {
-                ((ComputerPlayer) currentPlayer).takeTurn(deck);
-            }
-
-            turn = nextTurn();
-        }
-
-        // Dealer take turn after everyone else
-        dealer.takeTurn(deck);
-
-        // Calculate round result
-        calculateResults();
-
-        // Reset for next round
-        startNewRound();
-
     }
 
     /**
@@ -108,19 +78,21 @@ public class BlackjackGame {
 
     /**
      * Method to decide next turn
-     * 
-     * @return String of next turn player
      */
-    public String nextTurn() {
+    public void nextTurn() {
         switch (turn) {
             case "You":
-                return "Player 1";
+                turn = "Player 1";
+                break;
             case "Player 1":
-                return "Player 2";
+                turn = "Player 2";
+                break;
             case "Player 2":
-                return "Dealer";
+                turn = "Dealer";
+                break;
             default:
-                return "You";
+                turn = "You";
+                break;
         }
     }
 
@@ -275,5 +247,9 @@ public class BlackjackGame {
 
     public Player getPlayer2() {
         return player2;
+    }
+
+    public Deck getDeck() {
+        return deck;
     }
 }
