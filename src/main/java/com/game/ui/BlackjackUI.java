@@ -3,10 +3,14 @@ package com.game.ui;
 import java.util.List;
 
 import com.game.GameManagerController;
+import com.game.model.HighScore;
 import com.game.model.Blackjack.BlackjackGame;
 import com.game.model.Blackjack.Card;
 import com.game.model.Blackjack.HumanPlayer;
+import com.game.model.Blackjack.Player;
+import com.game.service.HighScoresManager;
 
+import javafx.animation.PauseTransition;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -18,8 +22,10 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 
 // TODO: Complete Blackjack game UI
 public class BlackjackUI extends Application {
@@ -28,26 +34,48 @@ public class BlackjackUI extends Application {
     private BlackjackGame game;
     private GameManagerController gameManagerController;
     private ToolbarUI toolbar;
+    private Label statusLabel;
+    private boolean sessionFinished;
+    private String username;
+    private HighScoresManager highScoresManager = new HighScoresManager();
+    private Button saveButton = new Button("Save State");
+    private Button stopButton = new Button("Stop");
+
+    /**
+     * Overloaded Constructor
+     * 
+     * @param username
+     */
+    public BlackjackUI(String username) {
+        this.username = username;
+    }
 
     @Override
     public void start(Stage primaryStage) {
         gameManagerController = new GameManagerController(primaryStage);
         game = new BlackjackGame();
         toolbar = new ToolbarUI(gameManagerController, primaryStage);
+        sessionFinished = false;
+
+        // Set status label
+        statusLabel = new Label("Welcome to Blackjack!");
+        statusLabel.setFont(new Font("Georgia", 30));
+        statusLabel.setTextFill(Color.RED);
+        statusLabel.setAlignment(Pos.CENTER);
 
         // Main root
         AnchorPane blackjackGame = new AnchorPane();
 
         // VBox Setting
-        VBox gameBox = new VBox(10);
-        gameBox.setAlignment(Pos.CENTER);
-        gameBox.setPadding(new Insets(10));
+        VBox gameVBox = new VBox(10);
+        gameVBox.setAlignment(Pos.CENTER);
+        gameVBox.setPadding(new Insets(10));
 
         // Anchor the VBox to all sides of the AnchorPane to center it
-        AnchorPane.setTopAnchor(gameBox, 20.0); // Top margin
-        AnchorPane.setLeftAnchor(gameBox, 20.0); // Left margin
-        AnchorPane.setRightAnchor(gameBox, 20.0); // Right margin
-        AnchorPane.setBottomAnchor(gameBox, 20.0); // Bottom margin
+        AnchorPane.setTopAnchor(gameVBox, 20.0); // Top margin
+        AnchorPane.setLeftAnchor(gameVBox, 20.0); // Left margin
+        AnchorPane.setRightAnchor(gameVBox, 20.0); // Right margin
+        AnchorPane.setBottomAnchor(gameVBox, 20.0); // Bottom margin
 
         // Create game title
         Label gameTitle = new Label("Blackjack Game");
@@ -66,13 +94,18 @@ public class BlackjackUI extends Application {
         loadButton.setOnAction(event -> showLoadScene(primaryStage));
 
         // Add elements to gameBox VBox
-        gameBox.getChildren().addAll(gameTitle, startButton, loadButton);
+        gameVBox.getChildren().addAll(gameTitle, startButton, loadButton);
 
-        blackjackGame.getChildren().addAll(toolbar, gameBox);
+        blackjackGame.getChildren().addAll(toolbar, gameVBox);
+
+        // Anchor toolbar
+        AnchorPane.setTopAnchor(toolbar, 0.0); // Top margin
+        AnchorPane.setLeftAnchor(toolbar, 0.0); // Left margin
+        AnchorPane.setRightAnchor(toolbar, 0.0); // Right margin
 
         primaryStage.setTitle("Blackjack Game");
         primaryStage.setScene(new Scene(blackjackGame, 600, 400));
-        primaryStage.show();
+        primaryStage.centerOnScreen();
 
     }
 
@@ -92,9 +125,20 @@ public class BlackjackUI extends Application {
      * @param stage Current primary stage
      */
     private void updateUI(Stage stage) {
+        // Game finished reset for new game
+        if (sessionFinished == true) {
+            game.calculateResults();
+
+        }
+
         // Create the labels
         Label turnLabel = new Label("Current Turn: " + game.getCurrentPlayer().getName());
         turnLabel.setFont(new Font("Georgia", 20));
+        // Hide turn indicator if round finish
+        if (sessionFinished == true) {
+            turnLabel.setVisible(false);
+            turnLabel.setManaged(false); // Remove label
+        }
 
         // Create balance labels
         Label userBalanceLabel = new Label("Your Balance: $" + game.getHumanPlayer().getBalance());
@@ -105,6 +149,16 @@ public class BlackjackUI extends Application {
 
         Label player2BalanceLabel = new Label("Player 2's Balance: $" + game.getPlayer2().getBalance());
         player2BalanceLabel.setFont(new Font("Georgia", 20));
+
+        // Display current bet amounts
+        Label userBetLabel = new Label("Your Bet: $" + game.getHumanPlayer().getBet());
+        userBetLabel.setFont(new Font("Georgia", 20));
+
+        Label player1BetLabel = new Label("Player 1's Bet: $" + game.getPlayer1().getBet());
+        player1BetLabel.setFont(new Font("Georgia", 20));
+
+        Label player2BetLabel = new Label("Player 2's Bet: $" + game.getPlayer2().getBet());
+        player2BetLabel.setFont(new Font("Georgia", 20));
 
         // Create a VBox to hold the labels
         BorderPane gameBox = new BorderPane();
@@ -124,9 +178,9 @@ public class BlackjackUI extends Application {
         dealerBox.setAlignment(Pos.CENTER);
 
         // Add balance to each user VBox
-        userBox.getChildren().add(userBalanceLabel);
-        player1Box.getChildren().add(player1BalanceLabel);
-        player2Box.getChildren().add(player2BalanceLabel);
+        userBox.getChildren().addAll(userBalanceLabel, userBetLabel);
+        player1Box.getChildren().addAll(player1BalanceLabel, player1BetLabel);
+        player2Box.getChildren().addAll(player2BalanceLabel, player2BetLabel);
 
         // Highlight current player VBox
         highlightPlayerBox(game, dealerBox, userBox, player1Box, player2Box);
@@ -152,11 +206,12 @@ public class BlackjackUI extends Application {
         HBox gameActionBox = new HBox(30);
         gameActionBox.setAlignment(Pos.CENTER);
 
-        HBox turnAndAction = new HBox(20);
+        HBox turnAndAction = new HBox(40);
+        turnAndAction.setAlignment(Pos.CENTER_RIGHT);
         turnAndAction.getChildren().add(turnLabel); // Add turn indicator
 
         // Show User Action Box if user turn
-        if (game.getCurrentPlayer() == game.getHumanPlayer()) {
+        if (game.getCurrentPlayer() == game.getHumanPlayer() || sessionFinished == true) {
             userAction(gameActionBox, stage, game);
         }
 
@@ -166,21 +221,112 @@ public class BlackjackUI extends Application {
         // Set gameActionBox, at the bottom of game screen
         gameBox.setBottom(turnAndAction);
 
+        // Use VBox to anchor statusLabel
+        VBox statusBox = new VBox();
+        statusBox.getChildren().add(statusLabel);
+        statusBox.setAlignment(Pos.CENTER);
+
+        gameBox.setTop(statusBox);
+
         // Set up the main layout
         AnchorPane blackjackGame = new AnchorPane();
-        AnchorPane.setTopAnchor(gameBox, 20.0);
-        AnchorPane.setLeftAnchor(gameBox, 20.0);
-        AnchorPane.setRightAnchor(gameBox, 20.0);
-        AnchorPane.setBottomAnchor(gameBox, 20.0);
+        AnchorPane.setTopAnchor(gameBox, 60.0);
+        AnchorPane.setLeftAnchor(gameBox, 60.0);
+        AnchorPane.setRightAnchor(gameBox, 60.0);
+        AnchorPane.setBottomAnchor(gameBox, 60.0);
 
         // Add balanceBox to the layout
-        blackjackGame.getChildren().add(gameBox);
+        blackjackGame.getChildren().addAll(toolbar, gameBox);
+
+        // Anchor toolbar
+        AnchorPane.setTopAnchor(toolbar, 0.0);
+        AnchorPane.setLeftAnchor(toolbar, 0.0);
+        AnchorPane.setRightAnchor(toolbar, 0.0);
 
         // Set the new scene and show it
-        Scene newScene = new Scene(blackjackGame, 900, 600);
+        Scene newScene = new Scene(blackjackGame, 1100, 700);
         stage.setScene(newScene);
-        stage.show();
+        stage.centerOnScreen();
 
+        // If game is not finished
+        if (sessionFinished == false) {
+            handleBotTurn(stage);
+        }
+
+    }
+
+    /**
+     * Helper method to update status
+     * 
+     * @param message Message to display
+     */
+    private void updateStatus(String message) {
+        statusLabel.setText(message);
+    }
+
+    /**
+     * Helper method to handle turn for bot player
+     * 
+     * @param stage Primary stage
+     */
+    private void handleBotTurn(Stage stage) {
+
+        String playerName = game.getCurrentPlayer().getName();
+
+        if (playerName.equals("Player 1") || playerName.equals("Player 2")) {
+            handlePlayerTurnWithDelay(stage, 16);
+
+        } else if (playerName.equals("Dealer")) {
+            handlePlayerTurnWithDelay(stage, 17);
+        }
+    }
+
+    /**
+     * Helper method to handle turn with added delay for animation
+     * 
+     * @param stage        Current stage
+     * @param minHandValue Minimum hand value
+     */
+    private void handlePlayerTurnWithDelay(Stage stage, int minHandValue) {
+        PauseTransition pause = new PauseTransition(Duration.seconds(2)); // Adjust time here
+        pause.setOnFinished(event -> {
+            Player currentPlayer = game.getCurrentPlayer();
+
+            // Player busts if hand value > 21
+            if (currentPlayer.calculateHandValue() > 21) {
+                updateStatus(currentPlayer.getName() + " Bust!");
+
+                if (currentPlayer.getName().equals("Dealer")) {
+                    sessionFinished = true;
+                } else {
+                    game.nextTurn();
+                }
+            }
+
+            // Hand value < minHandValue
+            else if (currentPlayer.calculateHandValue() < minHandValue) {
+                // Bot "Hit" if hand < minHandValue
+                currentPlayer.takeTurn(game.getDeck());
+                updateStatus(currentPlayer.getName() + " Hit!");
+            }
+
+            // Hand value >= minHandValue <= 21
+            else {
+                // Bot "Stand" if hand >= minHandValue
+                updateStatus(currentPlayer.getName() + " Stand!");
+
+                // If Dealer stop, don't go next turn
+                if (currentPlayer.getName().equals("Dealer")) {
+                    sessionFinished = true;
+                } else {
+                    game.nextTurn();
+                }
+            }
+
+            updateUI(stage);
+        });
+        // Start pause transition
+        pause.play();
     }
 
     /**
@@ -189,6 +335,8 @@ public class BlackjackUI extends Application {
      * @param gameActionBox HBox of game action
      */
     private void userAction(HBox gameActionBox, Stage stage, BlackjackGame game) {
+
+        HBox hitAndStandBox = new HBox(10);
 
         // Add "Hit" Button for user
         Button hitButton = new Button("Hit");
@@ -221,36 +369,145 @@ public class BlackjackUI extends Application {
         bet50.setFont(new Font("Georgia", 20));
         bet50.setPrefWidth(70);
 
-        bet1.setOnAction(event -> game.getHumanPlayer().setBet(1));
-        bet5.setOnAction(event -> game.getHumanPlayer().setBet(5));
-        bet25.setOnAction(event -> game.getHumanPlayer().setBet(25));
-        bet50.setOnAction(event -> game.getHumanPlayer().setBet(50));
+        bet1.setOnAction(event -> {
+            game.getHumanPlayer().setBet(1);
+            updateUI(stage);
+        });
+        bet5.setOnAction(event -> {
+            game.getHumanPlayer().setBet(5);
+            updateUI(stage);
+        });
+        bet25.setOnAction(event -> {
+            game.getHumanPlayer().setBet(25);
+            updateUI(stage);
+        });
+        bet50.setOnAction(event -> {
+            game.getHumanPlayer().setBet(50);
+            updateUI(stage);
+        });
 
         betBox.getChildren().addAll(betLabel, bet1, bet5, bet25, bet50);
 
+        // Add new round button to gameActionBox
+        Button newRoundButton = new Button("New Round");
+        newRoundButton.setFont(new Font("Georgia", 20));
+        newRoundButton.setPrefWidth(150);
+
+        // Stop button, to get score, and exit game
+
+        stopButton.setFont(new Font("Georgia", 20));
+        stopButton.setPrefWidth(150);
+
+        // Save button, to get save state string
+
+        saveButton.setFont(new Font("Georgia", 20));
+        saveButton.setPrefWidth(150);
+
+        // Ensure buttons are added only once
+        if (!toolbar.getItems().contains(stopButton)) {
+            toolbar.getItems().add(stopButton);
+        }
+        // Ensure buttons are added only once
+        if (!toolbar.getItems().contains(saveButton)) {
+            toolbar.getItems().add(saveButton);
+        }
+
+        if (sessionFinished == false) {
+            newRoundButton.setVisible(false);
+            newRoundButton.setManaged(false); // Remove from layout
+        } else {
+            hitAndStandBox.setVisible(false);
+            hitAndStandBox.setManaged(false); // Remove from layout
+            betBox.setVisible(false);
+            betBox.setManaged(false); // Remove from layout
+        }
+
+        // Add hit and stand button to HBox
+        hitAndStandBox.getChildren().addAll(hitButton, standButton);
+
         // Add button to game action HBox
-        gameActionBox.getChildren().addAll(hitButton, standButton, betBox);
+        gameActionBox.getChildren().addAll(hitAndStandBox, betBox, newRoundButton);
+        gameActionBox.setAlignment(Pos.CENTER);
+        HumanPlayer user = (HumanPlayer) game.getHumanPlayer();
 
         // Event handler for "Hit"
         hitButton.setOnAction(event -> {
-            HumanPlayer user = (HumanPlayer) game.getHumanPlayer();
-
-            // Check if user busted
-            if (user.calculateHandValue() > 21) {
-                gameManagerController.showAlert("Busted!", "You have gone over 21!");
-                updateUI(stage);
-
-            } else {
-                user.takeTurn(game.getDeck());
-                updateUI(stage);
+            // User bet = 0
+            if (game.getHumanPlayer().getBet() == 0) {
+                gameManagerController.showAlert("Invalid Bet Amount!", "Please place bet to continue!");
+            }
+            // User have bet
+            else {
+                // Check if user busted
+                if (user.calculateHandValue() > 21) {
+                    gameManagerController.showAlert("Busted!", "You have gone over 21!");
+                } else {
+                    updateStatus("You hit!");
+                    user.takeTurn(game.getDeck());
+                    updateUI(stage);
+                }
             }
         });
 
         // Event handler for "Stand"
         standButton.setOnAction(event -> {
-            // User don't take turn, skip to next turn
-            game.nextTurn();
+            // User bet = 0
+            if (game.getHumanPlayer().getBet() == 0) {
+                gameManagerController.showAlert("Invalid Bet Amount!", "Please place bet to continue!");
+            }
+            // User have bet
+            else {
+                // User don't take turn, skip to next turn
+                if (user.calculateHandValue() < 16) {
+                    gameManagerController.showAlert("Invalid!", "Make sure hand value at least 16!");
+                } else {
+                    updateStatus("You stands!");
+                    game.nextTurn();
+                    updateUI(stage);
+                }
+            }
+        });
+
+        // Event handler for new round
+        newRoundButton.setOnAction(event -> {
+            game.startNewRound();
+            sessionFinished = false;
+            updateStatus("Starting new round");
             updateUI(stage);
+        });
+
+        // Event handler for stop
+        stopButton.setOnAction(event -> {
+            HighScore highScore = new HighScore(username, game.getHumanPlayer().getBalance(),
+                    "Blackjack");
+
+            highScoresManager.addHighScores(username, highScore);
+            highScoresManager.loadHighScores();
+            BlackjackUI blackjackUI = new BlackjackUI(username);
+            blackjackUI.start(stage);
+        });
+
+        // Event handler for save state
+        saveButton.setOnAction(event -> {
+            // Create new Stage for save state dialog
+            Stage saveStateStage = new Stage();
+            saveStateStage.setTitle("Save Game State");
+
+            // BorderPane to hold TextArea
+            BorderPane displaySaveState = new BorderPane();
+
+            // Create TextArea to display saved game state
+            TextArea saveStateString = new TextArea();
+            saveStateString.appendText(game.saveGameState());
+
+            // TextArea set at center of BorderPane
+            displaySaveState.setCenter(saveStateString);
+
+            // Set uo scene for new stage
+            saveStateStage.setScene(new Scene(displaySaveState, 400, 200));
+            saveStateStage.setResizable(false);
+            saveStateStage.show();
+
         });
 
     }
@@ -330,17 +587,21 @@ public class BlackjackUI extends Application {
         dealerCardsBox.setAlignment(Pos.CENTER);
 
         List<Card> dealerHand = game.getDealer().getHand();
-        Label firstCardLabel = new Label(dealerHand.get(0).toString());
-        firstCardLabel.setFont(new Font("Georgia", 20));
-        dealerCardsBox.getChildren().add(firstCardLabel);
 
-        // Hide the second card until round end
-        Label hiddenCard = new Label("?");
-        hiddenCard.setFont(new Font("Georgia", 20));
-        dealerCardsBox.getChildren().add(hiddenCard);
+        // Show all dealer cards except the 2nd one until turn over
+        for (int i = 0; i < dealerHand.size(); i++) {
+            Label cardLabel = new Label(dealerHand.get(i).toString());
+            cardLabel.setFont(new Font("Georgia", 20));
+
+            // Hide 2nd card if not dealer turn
+            if (i == 1 && (game.getCurrentPlayer() != game.getDealer())) {
+                cardLabel.setText("?");
+            }
+            dealerCardsBox.getChildren().add(cardLabel);
+        }
 
         // Create labels or images for the cards in the player1's hand
-        HBox player1CardsBox = new HBox(10);
+        VBox player1CardsBox = new VBox(10);
         player1CardsBox.setAlignment(Pos.CENTER);
 
         for (Card card : game.getPlayer1().getHand()) {
@@ -350,7 +611,7 @@ public class BlackjackUI extends Application {
         }
 
         // Create labels or images for the cards in the player2's hand
-        HBox player2CardsBox = new HBox(10);
+        VBox player2CardsBox = new VBox(10);
         player2CardsBox.setAlignment(Pos.CENTER);
 
         for (Card card : game.getPlayer2().getHand()) {
@@ -409,7 +670,7 @@ public class BlackjackUI extends Application {
         cancelButton.setPrefWidth(100);
         // Event handler for "Cancel" button
         cancelButton.setOnAction(event -> {
-            BlackjackUI blackjackGame = new BlackjackUI();
+            BlackjackUI blackjackGame = new BlackjackUI(username);
             blackjackGame.start(stage);
         });
 
@@ -419,7 +680,7 @@ public class BlackjackUI extends Application {
         // Add dialog VBox to current stage
         stage.setScene(new Scene(dialogVBox, 600, 400));
         stage.setTitle("Load saved state");
-        stage.show();
+        stage.centerOnScreen();
     }
 
 }

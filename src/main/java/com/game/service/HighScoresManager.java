@@ -56,7 +56,7 @@ public class HighScoresManager {
                 int score = Integer.parseInt(parts[1]);
                 String gameName = parts[2];
 
-                Set<HighScore> userScores = highScores.putIfAbsent(username, new HashSet<>());
+                Set<HighScore> userScores = highScores.computeIfAbsent(username, k -> new HashSet<>());
 
                 // Link userScores Set to highScores Map's Set
                 if (userScores == null) {
@@ -80,7 +80,7 @@ public class HighScoresManager {
     public void createDefaultScores(Map<String, String> accounts) {
 
         for (String username : accounts.keySet()) {
-            Set<HighScore> userScores = highScores.putIfAbsent(username, new HashSet<>());
+            Set<HighScore> userScores = highScores.computeIfAbsent(username, k -> new HashSet<>());
 
             // Retrieve existing scores or create new one
             if (highScores.containsKey(username)) {
@@ -182,5 +182,41 @@ public class HighScoresManager {
 
         // Return top 5 scores
         return allScores.subList(0, Math.min(limit, allScores.size()));
+    }
+
+    /**
+     * Method to add high score to Map and store it
+     * 
+     * @param username  Username
+     * @param highScore High score to add
+     */
+    public void addHighScores(String username, HighScore highScore) {
+        // Retrieve user's high score
+        Set<HighScore> userScores = highScores.computeIfAbsent(username, k -> new HashSet<>());
+
+        // Add new high score to user's set of scores
+        userScores.add(highScore);
+
+        // Convert the set to a list to sort it
+        List<HighScore> sortedScores = new ArrayList<>(userScores);
+
+        // Sort the scores in descending order by score
+        Collections.sort(sortedScores, new Comparator<HighScore>() {
+            @Override
+            public int compare(HighScore s1, HighScore s2) {
+                return Integer.compare(s2.getScore(), s1.getScore());
+            }
+        });
+
+        // If there are more than the allowed top scores (5), remove the extra
+        if (sortedScores.size() > 5) {
+            sortedScores = sortedScores.subList(0, 5);
+        }
+
+        // Update the user's score set with the sorted top scores
+        highScores.put(username, new HashSet<>(sortedScores));
+
+        // Save the updated high scores to file
+        saveHighScores();
     }
 }

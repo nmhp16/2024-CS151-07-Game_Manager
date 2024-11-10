@@ -1,5 +1,6 @@
 package com.game.model.Blackjack;
 
+import java.util.Base64;
 import java.util.List;
 
 public class BlackjackGame {
@@ -49,9 +50,10 @@ public class BlackjackGame {
         player1.resetHand(); // Reset player 1 hand
         player2.resetHand(); // Reset player 2 hand
         deck.resetDeck(); // Reset deck
+        turn = "You";
 
         // Set bet for player
-        humanPlayer.setBet(100); // User bet, taken from JavaFX input
+        humanPlayer.setBet(0); // User bet, taken from JavaFX input
         player1.setBet(50); // Default bet for player 1
         player2.setBet(30); // Default bet for player 2
 
@@ -175,7 +177,10 @@ public class BlackjackGame {
         saveState.append("player1Bet:").append(player1.getBet()).append("|");
         saveState.append("player2Bet:").append(player2.getBet());
 
-        return saveState.toString();
+        // Encode game state to Base64
+        String encodedSaveState = Base64.getEncoder().encodeToString(saveState.toString().getBytes());
+
+        return encodedSaveState;
     }
 
     /**
@@ -184,7 +189,10 @@ public class BlackjackGame {
      * @param saveStateString Saved game state string
      */
     public void loadGameState(String saveStateString) {
-        String[] entries = saveStateString.split("\\|");
+        // Decode Base64 encoded string
+        String decodedState = new String(Base64.getDecoder().decode(saveStateString));
+
+        String[] entries = decodedState.split("\\|");
 
         for (String entry : entries) {
             String[] keyValue = entry.split(":");

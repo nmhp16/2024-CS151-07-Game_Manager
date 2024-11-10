@@ -36,11 +36,8 @@ public abstract class Player {
      * @param betAmount Amount of bet
      */
     public void setBet(int betAmount) {
-        if (betAmount <= balance && betAmount > 0) {
-            this.bet = betAmount;
-        } else {
-            System.out.println("Invalid bet amount.");
-        }
+        this.bet = betAmount;
+
     }
 
     /**
