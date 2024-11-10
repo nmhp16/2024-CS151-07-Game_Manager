@@ -7,7 +7,7 @@ public class Dealer extends Player {
 
     @Override
     public void takeTurn(Deck deck) {
-        if (calculateHandValue() < 17) {
+        while (calculateHandValue() < 17) {
             Card card = deck.drawCard(); // Draw card and remove it from deck
             addCard(card); // Add card to player hand
         }
