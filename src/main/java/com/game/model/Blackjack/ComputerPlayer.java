@@ -7,9 +7,8 @@ public class ComputerPlayer extends Player {
 
     @Override
     public void takeTurn(Deck deck) {
-        while (calculateHandValue() < 16) {
-            Card card = deck.drawCard(); // Draw card and remove it from deck
-            addCard(card); // Add card to player hand
-        }
+        Card card = deck.drawCard(); // Draw card and remove it from deck
+        addCard(card); // Add card to player hand
+
     }
 }

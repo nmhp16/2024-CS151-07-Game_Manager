@@ -19,6 +19,7 @@ public class ToolbarUI extends ToolBar {
 
         // Add "Sign Out" button to toolbar
         signOutButton.setFont(new Font("Georgia", 20));
+        signOutButton.setPrefWidth(150);
         this.getItems().add(signOutButton);
 
         // Create "Main Menu" button
@@ -27,6 +28,7 @@ public class ToolbarUI extends ToolBar {
 
         // Add "Main Menu" button to toolbar
         mainMenuButton.setFont(new Font("Georgia", 20));
+        mainMenuButton.setPrefWidth(150);
         this.getItems().add(mainMenuButton);
 
         this.setPrefHeight(30);

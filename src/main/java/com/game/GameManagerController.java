@@ -30,6 +30,8 @@ public class GameManagerController {
     private Stage stage;
     private LoginManager loginManager = new LoginManager();
     private ToolbarUI toolbar;
+    private HighScoresManager highScoresManager = new HighScoresManager();
+    private String username;
 
     public GameManagerController(Stage stage) {
         this.stage = stage;
@@ -47,6 +49,7 @@ public class GameManagerController {
      * Method to handle login event
      */
     public void handleLogin(String username, String password) {
+        this.username = username;
 
         if (loginManager.login(username, password)) {
             showMainMenu(stage);
@@ -149,7 +152,6 @@ public class GameManagerController {
         VBox scoreList = new VBox(10);
         scoreList.setAlignment(Pos.TOP_LEFT);
 
-        HighScoresManager highScoresManager = new HighScoresManager();
         List<HighScore> blackjackScores = highScoresManager.getTopScores("Blackjack", 5);
         List<HighScore> snakeScores = highScoresManager.getTopScores("Snake", 5);
 
@@ -194,10 +196,11 @@ public class GameManagerController {
         AnchorPane.setBottomAnchor(vbox, 20.0); // Bottom margin
 
         stage.setScene(new Scene(mainMenu, 900, 600));
+        stage.centerOnScreen();
 
         // Event handler for "Play Blackjack" button
         playBlackjackButton.setOnAction(event -> {
-            BlackjackUI blackjackGame = new BlackjackUI();
+            BlackjackUI blackjackGame = new BlackjackUI(username);
             blackjackGame.start(stage);
         });
 

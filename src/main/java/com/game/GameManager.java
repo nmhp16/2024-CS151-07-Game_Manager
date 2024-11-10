@@ -21,6 +21,7 @@ public class GameManager extends Application {
 
         primaryStage.setTitle("Game Manager");
         primaryStage.setScene(new Scene(loginPage.getLoginPage(), 600, 400));
+        primaryStage.centerOnScreen();
         primaryStage.show();
     }
 
