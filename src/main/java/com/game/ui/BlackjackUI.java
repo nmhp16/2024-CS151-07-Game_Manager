@@ -1,5 +1,6 @@
 package com.game.ui;
 
+import java.io.File;
 import java.util.List;
 
 import com.game.GameManagerController;
@@ -14,20 +15,23 @@ import javafx.animation.PauseTransition;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
-// TODO: Complete Blackjack game UI
 public class BlackjackUI extends Application {
     private TextArea loadStateField;
     private Button startButton, loadButton;
@@ -40,6 +44,7 @@ public class BlackjackUI extends Application {
     private HighScoresManager highScoresManager = new HighScoresManager();
     private Button saveButton = new Button("Save State");
     private Button stopButton = new Button("Stop");
+    private Button newRoundButton = new Button("New Round");
 
     /**
      * Overloaded Constructor
@@ -134,6 +139,8 @@ public class BlackjackUI extends Application {
         // Create the labels
         Label turnLabel = new Label("Current Turn: " + game.getCurrentPlayer().getName());
         turnLabel.setFont(new Font("Georgia", 20));
+        turnLabel.setTextFill(Color.WHITE);
+
         // Hide turn indicator if round finish
         if (sessionFinished == true) {
             turnLabel.setVisible(false);
@@ -142,23 +149,29 @@ public class BlackjackUI extends Application {
 
         // Create balance labels
         Label userBalanceLabel = new Label("Your Balance: $" + game.getHumanPlayer().getBalance());
-        userBalanceLabel.setFont(new Font("Georgia", 20));
+        userBalanceLabel.setFont(new Font("Georgia", 15));
+        userBalanceLabel.setTextFill(Color.WHITE);
 
         Label player1BalanceLabel = new Label("Player 1's Balance: $" + game.getPlayer1().getBalance());
-        player1BalanceLabel.setFont(new Font("Georgia", 20));
+        player1BalanceLabel.setFont(new Font("Georgia", 15));
+        player1BalanceLabel.setTextFill(Color.WHITE);
 
         Label player2BalanceLabel = new Label("Player 2's Balance: $" + game.getPlayer2().getBalance());
-        player2BalanceLabel.setFont(new Font("Georgia", 20));
+        player2BalanceLabel.setFont(new Font("Georgia", 15));
+        player2BalanceLabel.setTextFill(Color.WHITE);
 
         // Display current bet amounts
         Label userBetLabel = new Label("Your Bet: $" + game.getHumanPlayer().getBet());
-        userBetLabel.setFont(new Font("Georgia", 20));
+        userBetLabel.setFont(new Font("Georgia", 15));
+        userBetLabel.setTextFill(Color.WHITE);
 
         Label player1BetLabel = new Label("Player 1's Bet: $" + game.getPlayer1().getBet());
-        player1BetLabel.setFont(new Font("Georgia", 20));
+        player1BetLabel.setFont(new Font("Georgia", 15));
+        player1BetLabel.setTextFill(Color.WHITE);
 
         Label player2BetLabel = new Label("Player 2's Bet: $" + game.getPlayer2().getBet());
-        player2BetLabel.setFont(new Font("Georgia", 20));
+        player2BetLabel.setFont(new Font("Georgia", 15));
+        player2BetLabel.setTextFill(Color.WHITE);
 
         // Create a VBox to hold the labels
         BorderPane gameBox = new BorderPane();
@@ -187,7 +200,8 @@ public class BlackjackUI extends Application {
 
         // Add dealer player name
         Label dealerLabel = new Label("Dealer");
-        dealerLabel.setFont(new Font("Georgia", 20));
+        dealerLabel.setFont(new Font("Georgia", 15));
+        dealerLabel.setTextFill(Color.WHITE);
         dealerBox.getChildren().add(dealerLabel);
 
         // Display cards
@@ -199,8 +213,8 @@ public class BlackjackUI extends Application {
         playerInfo.setLeft(player2Box);
         playerInfo.setTop(dealerBox);
 
-        // Elements to BorderPane gameBox
-        gameBox.setCenter(playerInfo); // Player session
+        // Add image for deck
+        addDeckImage(gameBox, playerInfo);
 
         // HBox for game action
         HBox gameActionBox = new HBox(30);
@@ -235,6 +249,9 @@ public class BlackjackUI extends Application {
         AnchorPane.setRightAnchor(gameBox, 60.0);
         AnchorPane.setBottomAnchor(gameBox, 60.0);
 
+        // Set background image for game
+        setBackgroundImage(blackjackGame);
+
         // Add balanceBox to the layout
         blackjackGame.getChildren().addAll(toolbar, gameBox);
 
@@ -243,16 +260,20 @@ public class BlackjackUI extends Application {
         AnchorPane.setLeftAnchor(toolbar, 0.0);
         AnchorPane.setRightAnchor(toolbar, 0.0);
 
+        // Get the primary screen size
+        Screen screen = Screen.getPrimary();
+        double screenWidth = screen.getVisualBounds().getWidth();
+        double screenHeight = screen.getVisualBounds().getHeight();
+
         // Set the new scene and show it
-        Scene newScene = new Scene(blackjackGame, 1100, 700);
-        stage.setScene(newScene);
+        Scene newScene = new Scene(blackjackGame, screenWidth - 20, screenHeight - 40);
+        stage.setScene(newScene); // Set scene to stage
         stage.centerOnScreen();
 
         // If game is not finished
         if (sessionFinished == false) {
             handleBotTurn(stage);
         }
-
     }
 
     /**
@@ -351,6 +372,7 @@ public class BlackjackUI extends Application {
         // Betting option
         Label betLabel = new Label("Bet:");
         betLabel.setFont(new Font("Georgia", 20));
+        betLabel.setTextFill(Color.WHITE);
 
         HBox betBox = new HBox(10);
         Button bet1 = new Button("$1");
@@ -388,20 +410,17 @@ public class BlackjackUI extends Application {
 
         betBox.getChildren().addAll(betLabel, bet1, bet5, bet25, bet50);
 
-        // Add new round button to gameActionBox
-        Button newRoundButton = new Button("New Round");
-        newRoundButton.setFont(new Font("Georgia", 20));
-        newRoundButton.setPrefWidth(150);
-
         // Stop button, to get score, and exit game
-
         stopButton.setFont(new Font("Georgia", 20));
         stopButton.setPrefWidth(150);
 
         // Save button, to get save state string
-
         saveButton.setFont(new Font("Georgia", 20));
         saveButton.setPrefWidth(150);
+
+        // Add new round button to toolbar
+        newRoundButton.setFont(new Font("Georgia", 20));
+        newRoundButton.setPrefWidth(150);
 
         // Ensure buttons are added only once
         if (!toolbar.getItems().contains(stopButton)) {
@@ -412,10 +431,12 @@ public class BlackjackUI extends Application {
             toolbar.getItems().add(saveButton);
         }
 
-        if (sessionFinished == false) {
-            newRoundButton.setVisible(false);
-            newRoundButton.setManaged(false); // Remove from layout
-        } else {
+        // Ensure buttons are added only once
+        if (!toolbar.getItems().contains(newRoundButton)) {
+            toolbar.getItems().add(newRoundButton);
+        }
+
+        if (sessionFinished == true) {
             hitAndStandBox.setVisible(false);
             hitAndStandBox.setManaged(false); // Remove from layout
             betBox.setVisible(false);
@@ -426,7 +447,7 @@ public class BlackjackUI extends Application {
         hitAndStandBox.getChildren().addAll(hitButton, standButton);
 
         // Add button to game action HBox
-        gameActionBox.getChildren().addAll(hitAndStandBox, betBox, newRoundButton);
+        gameActionBox.getChildren().addAll(hitAndStandBox, betBox);
         gameActionBox.setAlignment(Pos.CENTER);
         HumanPlayer user = (HumanPlayer) game.getHumanPlayer();
 
@@ -503,7 +524,7 @@ public class BlackjackUI extends Application {
             // TextArea set at center of BorderPane
             displaySaveState.setCenter(saveStateString);
 
-            // Set uo scene for new stage
+            // Set up scene for new stage
             saveStateStage.setScene(new Scene(displaySaveState, 400, 200));
             saveStateStage.setResizable(false);
             saveStateStage.show();
@@ -575,11 +596,19 @@ public class BlackjackUI extends Application {
         HBox playerCardsBox = new HBox(10);
         playerCardsBox.setAlignment(Pos.CENTER);
 
+        // Displaying card for user
         for (Card card : game.getHumanPlayer().getHand()) {
-            // Displaying card name as an example
-            Label cardLabel = new Label(card.toString());
-            cardLabel.setFont(new Font("Georgia", 20));
-            playerCardsBox.getChildren().add(cardLabel);
+
+            // Match card with its image
+            File file = new File("images/" + card.toString().toLowerCase() + ".png");
+            Image image = new Image(file.toURI().toString());
+            ImageView cardImageView = new ImageView(image);
+
+            // Adjust card size
+            cardImageView.setFitWidth(70);
+            cardImageView.setPreserveRatio(true);
+
+            playerCardsBox.getChildren().add(cardImageView);
         }
 
         // Create labels or images for the cards in the dealer's hand
@@ -590,14 +619,27 @@ public class BlackjackUI extends Application {
 
         // Show all dealer cards except the 2nd one until turn over
         for (int i = 0; i < dealerHand.size(); i++) {
-            Label cardLabel = new Label(dealerHand.get(i).toString());
-            cardLabel.setFont(new Font("Georgia", 20));
+            // Match card with its image
+            File file = new File("images/" + dealerHand.get(i).toString().toLowerCase() + ".png");
+            Image image = new Image(file.toURI().toString());
+            ImageView cardImageView = new ImageView(image);
+
+            // Adjust card size
+            cardImageView.setFitWidth(70);
+            cardImageView.setPreserveRatio(true);
 
             // Hide 2nd card if not dealer turn
-            if (i == 1 && (game.getCurrentPlayer() != game.getDealer())) {
-                cardLabel.setText("?");
+            if (i == 1 && sessionFinished == false) {
+                // Match card with its image
+                file = new File("images/redback.png");
+                image = new Image(file.toURI().toString());
+                cardImageView = new ImageView(image);
+
+                // Adjust card size
+                cardImageView.setFitWidth(75);
+                cardImageView.setPreserveRatio(true);
             }
-            dealerCardsBox.getChildren().add(cardLabel);
+            dealerCardsBox.getChildren().add(cardImageView);
         }
 
         // Create labels or images for the cards in the player1's hand
@@ -605,9 +647,23 @@ public class BlackjackUI extends Application {
         player1CardsBox.setAlignment(Pos.CENTER);
 
         for (Card card : game.getPlayer1().getHand()) {
-            Label cardLabel = new Label(card.toString());
-            cardLabel.setFont(new Font("Georgia", 20));
-            player1CardsBox.getChildren().add(cardLabel);
+
+            // Match card with its image
+            File file = new File("images/" + card.toString().toLowerCase() + ".png");
+            Image image = new Image(file.toURI().toString());
+            ImageView cardImageView = new ImageView(image);
+
+            // Adjust card size
+            cardImageView.setFitWidth(70);
+            cardImageView.setPreserveRatio(true);
+
+            // Rotate the image 90 degrees
+            cardImageView.setRotate(90);
+
+            // Using Group to apply rotation to avoid extra space from rotating
+            Group rotatedGroup = new Group(cardImageView);
+
+            player1CardsBox.getChildren().add(rotatedGroup);
         }
 
         // Create labels or images for the cards in the player2's hand
@@ -615,9 +671,23 @@ public class BlackjackUI extends Application {
         player2CardsBox.setAlignment(Pos.CENTER);
 
         for (Card card : game.getPlayer2().getHand()) {
-            Label cardLabel = new Label(card.toString());
-            cardLabel.setFont(new Font("Georgia", 20));
-            player2CardsBox.getChildren().add(cardLabel);
+
+            // Match card with its image
+            File file = new File("images/" + card.toString().toLowerCase() + ".png");
+            Image image = new Image(file.toURI().toString());
+            ImageView cardImageView = new ImageView(image);
+
+            // Adjust card size
+            cardImageView.setFitWidth(70);
+            cardImageView.setPreserveRatio(true);
+
+            // Rotate the image 90 degrees
+            cardImageView.setRotate(90);
+
+            // Using Group to apply rotation to avoid extra space from rotating
+            Group rotatedGroup = new Group(cardImageView);
+
+            player2CardsBox.getChildren().add(rotatedGroup);
         }
 
         userBox.getChildren().add(playerCardsBox);
@@ -681,6 +751,46 @@ public class BlackjackUI extends Application {
         stage.setScene(new Scene(dialogVBox, 600, 400));
         stage.setTitle("Load saved state");
         stage.centerOnScreen();
+    }
+
+    /**
+     * Helper method to set image for deck
+     * 
+     * @param gameBox    BorderPane for game information
+     * @param playerInfo BorderPane for player information
+     */
+    private void addDeckImage(BorderPane gameBox, BorderPane playerInfo) {
+        File file = new File("images/redback.png");
+        Image image = new Image(file.toURI().toString());
+        ImageView deckImageView = new ImageView(image);
+
+        // Adjust deck size
+        deckImageView.setFitWidth(80);
+        deckImageView.setPreserveRatio(true);
+        playerInfo.setCenter(deckImageView);
+
+        // Elements to BorderPane gameBox
+        gameBox.setCenter(playerInfo); // Player session
+    }
+
+    /**
+     * Helper method to set game background
+     * 
+     * @param blackjackGame AnchorPane for game display
+     */
+    private void setBackgroundImage(AnchorPane blackjackGame) {
+        // Set background image
+        File backgroundFile = new File("images/background.jpg");
+        Image backgroundImage = new Image(backgroundFile.toURI().toString());
+        ImageView imageView = new ImageView(backgroundImage);
+
+        // Resize background image to fill the screen
+        imageView.setFitWidth(2000);
+        imageView.setFitHeight(2000);
+        imageView.setPreserveRatio(true);
+
+        // Add background image as the first child
+        blackjackGame.getChildren().add(imageView);
     }
 
 }
