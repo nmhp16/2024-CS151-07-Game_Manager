@@ -102,6 +102,8 @@ public class HighScoresManager {
             // Add default score for "Blackjack"
             if (!hasBlackjackSCore) {
                 userScores.add(new HighScore(username, 1000, "Blackjack"));
+                // Write updated high scores to file
+                saveHighScores();
             }
 
             // Check if a "Snake" score already exists
@@ -115,12 +117,12 @@ public class HighScoresManager {
             // Add default "Snake" score if not present
             if (!hasSnakeScore) {
                 userScores.add(new HighScore(username, 1000, "Snake"));
+                // Write updated high scores to file
+                saveHighScores();
             }
 
         }
 
-        // Write updated high scores to file
-        saveHighScores();
     }
 
     /**

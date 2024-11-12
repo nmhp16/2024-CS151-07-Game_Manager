@@ -55,7 +55,7 @@ public class BlackjackGame {
         // Set bet for player
         humanPlayer.setBet(0); // User bet, taken from JavaFX input
         player1.setBet(50); // Default bet for player 1
-        player2.setBet(30); // Default bet for player 2
+        player2.setBet(100); // Default bet for player 2
 
         initializeHands(); // Give 2 cards to all players
     }
