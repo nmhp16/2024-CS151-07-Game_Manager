@@ -125,96 +125,90 @@ public class BlackjackUI extends Application {
     }
 
     /**
+     * Helper method to display load saved state scene
+     * 
+     * @param stage Current primaryStage
+     */
+    private void showLoadScene(Stage stage) {
+        // Layout for dialog
+        VBox dialogVBox = new VBox(10);
+        dialogVBox.setPadding(new Insets(20));
+        dialogVBox.setAlignment(Pos.CENTER);
+
+        // Label to guide user
+        Label instructionLabel = new Label("Please paste saved game state below:");
+        instructionLabel.setFont(new Font("Georgia", 30));
+
+        // Create text field
+        loadStateField = new TextArea();
+        loadStateField.setPromptText("Paste text here");
+        loadStateField.setFont(new Font("Georgia", 20));
+
+        // Button to Load game state
+        Button loadGameButton = new Button("Load");
+        loadGameButton.setFont(new Font("Georgia", 20));
+        loadGameButton.setPrefWidth(100);
+
+        // Event handler for "Load Game" button
+        loadGameButton.setOnAction(event -> {
+            String saveStateString = loadStateField.getText();
+
+            if (!saveStateString.isEmpty()) {
+                game.loadGameState(saveStateString);
+                updateUI(stage);
+            } else {
+                gameManagerController.showAlert("Invalid Input", "Please enter a valid saved state string.");
+            }
+        });
+
+        // Button to cancel loading
+        Button cancelButton = new Button("Cancel");
+        cancelButton.setFont(new Font("Georgia", 20));
+        cancelButton.setPrefWidth(100);
+        // Event handler for "Cancel" button
+        cancelButton.setOnAction(event -> {
+            BlackjackUI blackjackGame = new BlackjackUI(username);
+            blackjackGame.start(stage);
+        });
+
+        // Add elements to dialog
+        dialogVBox.getChildren().addAll(instructionLabel, loadStateField, loadGameButton, cancelButton);
+
+        // Add dialog VBox to current stage
+        stage.setScene(new Scene(dialogVBox, 600, 400));
+        stage.setTitle("Load saved state");
+        stage.centerOnScreen();
+    }
+
+    /**
      * Method to update UI with current game state
      * 
      * @param stage Current primary stage
      */
     private void updateUI(Stage stage) {
         // Game finished reset for new game
-        if (sessionFinished == true) {
+        if (sessionFinished) {
             game.calculateResults();
 
         }
 
-        // Create the labels
-        Label turnLabel = new Label("Current Turn: " + game.getCurrentPlayer().getName());
-        turnLabel.setFont(new Font("Georgia", 20));
-        turnLabel.setTextFill(Color.WHITE);
+        // Create the turn label
+        Label turnLabel = createTurnLabel();
 
-        // Hide turn indicator if round finish
-        if (sessionFinished == true) {
-            turnLabel.setVisible(false);
-            turnLabel.setManaged(false); // Remove label
-        }
+        // Create balance labels for players
+        Label userBalanceLabel = createLabel("Your Balance: $" + game.getHumanPlayer().getBalance());
+        Label player1BalanceLabel = createLabel("Player 1's Balance: $" + game.getPlayer1().getBalance());
+        Label player2BalanceLabel = createLabel("Player 2's Balance: $" + game.getPlayer2().getBalance());
 
-        // Create balance labels
-        Label userBalanceLabel = new Label("Your Balance: $" + game.getHumanPlayer().getBalance());
-        userBalanceLabel.setFont(new Font("Georgia", 15));
-        userBalanceLabel.setTextFill(Color.WHITE);
-
-        Label player1BalanceLabel = new Label("Player 1's Balance: $" + game.getPlayer1().getBalance());
-        player1BalanceLabel.setFont(new Font("Georgia", 15));
-        player1BalanceLabel.setTextFill(Color.WHITE);
-
-        Label player2BalanceLabel = new Label("Player 2's Balance: $" + game.getPlayer2().getBalance());
-        player2BalanceLabel.setFont(new Font("Georgia", 15));
-        player2BalanceLabel.setTextFill(Color.WHITE);
-
-        // Display current bet amounts
-        Label userBetLabel = new Label("Your Bet: $" + game.getHumanPlayer().getBet());
-        userBetLabel.setFont(new Font("Georgia", 15));
-        userBetLabel.setTextFill(Color.WHITE);
-
-        Label player1BetLabel = new Label("Player 1's Bet: $" + game.getPlayer1().getBet());
-        player1BetLabel.setFont(new Font("Georgia", 15));
-        player1BetLabel.setTextFill(Color.WHITE);
-
-        Label player2BetLabel = new Label("Player 2's Bet: $" + game.getPlayer2().getBet());
-        player2BetLabel.setFont(new Font("Georgia", 15));
-        player2BetLabel.setTextFill(Color.WHITE);
-
-        // Create a VBox to hold the labels
+        // Create layout components
         BorderPane gameBox = new BorderPane();
-        BorderPane playerInfo = new BorderPane();
-        playerInfo.setPadding(new Insets(20));
+        BorderPane playerInfo = createPlayerInfoLayout(userBalanceLabel, player1BalanceLabel, player2BalanceLabel);
 
-        // VBox for each player
-        VBox userBox = new VBox(10);
-        VBox player1Box = new VBox(10);
-        VBox player2Box = new VBox(10);
-        VBox dealerBox = new VBox(10);
+        // Create bet images layout in BorderPane
+        BorderPane boardMiddle = createBetImagesLayout();
 
-        // Align each player VBox Center
-        userBox.setAlignment(Pos.CENTER);
-        player1Box.setAlignment(Pos.CENTER);
-        player2Box.setAlignment(Pos.CENTER);
-        dealerBox.setAlignment(Pos.CENTER);
-
-        // Add balance to each user VBox
-        userBox.getChildren().addAll(userBalanceLabel, userBetLabel);
-        player1Box.getChildren().addAll(player1BalanceLabel, player1BetLabel);
-        player2Box.getChildren().addAll(player2BalanceLabel, player2BetLabel);
-
-        // Highlight current player VBox
-        highlightPlayerBox(game, dealerBox, userBox, player1Box, player2Box);
-
-        // Add dealer player name
-        Label dealerLabel = new Label("Dealer");
-        dealerLabel.setFont(new Font("Georgia", 15));
-        dealerLabel.setTextFill(Color.WHITE);
-        dealerBox.getChildren().add(dealerLabel);
-
-        // Display cards
-        updateCardsDisplay(dealerBox, userBox, player1Box, player2Box);
-
-        // Set each player box to BorderPane
-        playerInfo.setBottom(userBox);
-        playerInfo.setRight(player1Box);
-        playerInfo.setLeft(player2Box);
-        playerInfo.setTop(dealerBox);
-
-        // Add image for deck
-        playerInfo.setCenter(getCardBackImageView(80));
+        // Set boardMiddle at the center of BorderPane playerInfo
+        playerInfo.setCenter(boardMiddle);
 
         // HBox for game action
         HBox gameActionBox = new HBox(30);
@@ -224,8 +218,8 @@ public class BlackjackUI extends Application {
         turnAndAction.setAlignment(Pos.CENTER_RIGHT);
         turnAndAction.getChildren().add(turnLabel); // Add turn indicator
 
-        // Show User Action Box if user turn
-        if (game.getCurrentPlayer() == game.getHumanPlayer() || sessionFinished == true) {
+        // Show User Action Box if user turn, or game finished
+        if (game.getCurrentPlayer() == game.getHumanPlayer() || sessionFinished) {
             userAction(gameActionBox, stage, game);
         }
 
@@ -327,8 +321,8 @@ public class BlackjackUI extends Application {
                 }
             }
 
-            // Hand value < minHandValue
-            else if (currentPlayer.calculateHandValue() < minHandValue) {
+            // Hand value < minHandValue and hand size < 5
+            else if (currentPlayer.calculateHandValue() < minHandValue && currentPlayer.getHand().size() < 5) {
                 // Bot "Hit" if hand < minHandValue
                 currentPlayer.takeTurn(game.getDeck());
                 updateStatus(currentPlayer.getName() + " Hit!");
@@ -373,45 +367,43 @@ public class BlackjackUI extends Application {
         standButton.setPrefWidth(100);
 
         // Betting option
-        Label betLabel = new Label("Bet:");
-        betLabel.setFont(new Font("Georgia", 20));
-        betLabel.setTextFill(Color.WHITE);
+        Label betLabel = createLabel("Bet:");
 
         HBox betBox = new HBox(10);
-        Button bet1 = new Button("$1");
-        bet1.setFont(new Font("Georgia", 20));
-        bet1.setPrefWidth(70);
-
-        Button bet5 = new Button("$5");
-        bet5.setFont(new Font("Georgia", 20));
-        bet5.setPrefWidth(70);
-
-        Button bet25 = new Button("$25");
-        bet25.setFont(new Font("Georgia", 20));
-        bet25.setPrefWidth(70);
+        Button bet10 = new Button("$10");
+        bet10.setFont(new Font("Georgia", 20));
+        bet10.setPrefWidth(90);
 
         Button bet50 = new Button("$50");
         bet50.setFont(new Font("Georgia", 20));
-        bet50.setPrefWidth(70);
+        bet50.setPrefWidth(90);
 
-        bet1.setOnAction(event -> {
-            game.getHumanPlayer().setBet(1);
-            updateUI(stage);
-        });
-        bet5.setOnAction(event -> {
-            game.getHumanPlayer().setBet(5);
-            updateUI(stage);
-        });
-        bet25.setOnAction(event -> {
-            game.getHumanPlayer().setBet(25);
+        Button bet100 = new Button("$100");
+        bet100.setFont(new Font("Georgia", 20));
+        bet100.setPrefWidth(90);
+
+        Button bet500 = new Button("$500");
+        bet500.setFont(new Font("Georgia", 20));
+        bet500.setPrefWidth(90);
+
+        bet10.setOnAction(event -> {
+            game.getHumanPlayer().setBet(10);
             updateUI(stage);
         });
         bet50.setOnAction(event -> {
             game.getHumanPlayer().setBet(50);
             updateUI(stage);
         });
+        bet100.setOnAction(event -> {
+            game.getHumanPlayer().setBet(100);
+            updateUI(stage);
+        });
+        bet500.setOnAction(event -> {
+            game.getHumanPlayer().setBet(500);
+            updateUI(stage);
+        });
 
-        betBox.getChildren().addAll(betLabel, bet1, bet5, bet25, bet50);
+        betBox.getChildren().addAll(betLabel, bet10, bet50, bet100, bet500);
 
         // Stop button, to get score, and exit game
         stopButton.setFont(new Font("Georgia", 20));
@@ -439,7 +431,8 @@ public class BlackjackUI extends Application {
             toolbar.getItems().add(newRoundButton);
         }
 
-        if (sessionFinished == true) {
+        // Game finished hide these
+        if (sessionFinished) {
             hitAndStandBox.setVisible(false);
             hitAndStandBox.setManaged(false); // Remove from layout
             betBox.setVisible(false);
@@ -466,9 +459,13 @@ public class BlackjackUI extends Application {
                 if (user.calculateHandValue() > 21) {
                     gameManagerController.showAlert("Busted!", "You have gone over 21!");
                 } else {
-                    updateStatus("You hit!");
-                    user.takeTurn(game.getDeck());
-                    updateUI(stage);
+                    if (user.getHand().size() < 5) {
+                        updateStatus("You hit!");
+                        user.takeTurn(game.getDeck());
+                        updateUI(stage);
+                    } else {
+                        gameManagerController.showAlert("Limit reached!", "You have reached limit of 5 cards!");
+                    }
                 }
             }
         });
@@ -683,63 +680,7 @@ public class BlackjackUI extends Application {
     }
 
     /**
-     * Helper method to display load saved state scene
-     * 
-     * @param stage Current primaryStage
-     */
-    private void showLoadScene(Stage stage) {
-        // Layout for dialog
-        VBox dialogVBox = new VBox(10);
-        dialogVBox.setPadding(new Insets(20));
-        dialogVBox.setAlignment(Pos.CENTER);
-
-        // Label to guide user
-        Label instructionLabel = new Label("Please paste saved game state below:");
-        instructionLabel.setFont(new Font("Georgia", 30));
-
-        // Create text field
-        loadStateField = new TextArea();
-        loadStateField.setPromptText("Paste text here");
-        loadStateField.setFont(new Font("Georgia", 20));
-
-        // Button to Load game state
-        Button loadGameButton = new Button("Load");
-        loadGameButton.setFont(new Font("Georgia", 20));
-        loadGameButton.setPrefWidth(100);
-
-        // Event handler for "Load Game" button
-        loadGameButton.setOnAction(event -> {
-            String saveStateString = loadStateField.getText();
-
-            if (!saveStateString.isEmpty()) {
-                game.loadGameState(saveStateString);
-                updateUI(stage);
-            } else {
-                gameManagerController.showAlert("Invalid Input", "Please enter a valid saved state string.");
-            }
-        });
-
-        // Button to cancel loading
-        Button cancelButton = new Button("Cancel");
-        cancelButton.setFont(new Font("Georgia", 20));
-        cancelButton.setPrefWidth(100);
-        // Event handler for "Cancel" button
-        cancelButton.setOnAction(event -> {
-            BlackjackUI blackjackGame = new BlackjackUI(username);
-            blackjackGame.start(stage);
-        });
-
-        // Add elements to dialog
-        dialogVBox.getChildren().addAll(instructionLabel, loadStateField, loadGameButton, cancelButton);
-
-        // Add dialog VBox to current stage
-        stage.setScene(new Scene(dialogVBox, 600, 400));
-        stage.setTitle("Load saved state");
-        stage.centerOnScreen();
-    }
-
-    /**
-     * Helper method to set image for deck
+     * Helper method to set image for card back
      * 
      * @param gameBox    BorderPane for game information
      * @param playerInfo BorderPane for player information
@@ -749,7 +690,7 @@ public class BlackjackUI extends Application {
         Image image = new Image(file.toURI().toString());
         ImageView backImageView = new ImageView(image);
 
-        // Adjust deck size
+        // Adjust card back size
         backImageView.setFitWidth(width);
         backImageView.setPreserveRatio(true);
 
@@ -763,7 +704,7 @@ public class BlackjackUI extends Application {
      */
     private void setBackgroundImage(AnchorPane blackjackGame) {
         // Set background image
-        File backgroundFile = new File("images/background2.jpg");
+        File backgroundFile = new File("images/background.jpg");
         Image backgroundImage = new Image(backgroundFile.toURI().toString());
         ImageView imageView = new ImageView(backgroundImage);
 
@@ -776,4 +717,131 @@ public class BlackjackUI extends Application {
         blackjackGame.getChildren().add(imageView);
     }
 
+    /**
+     * Helper method to display image for bet
+     * 
+     * @param betAmount Bet amount
+     * @param width     Width of image
+     * @return ImageView for bet
+     */
+    private ImageView getBetImage(int betAmount, int width) {
+        File file = new File("images/" + Integer.toString(betAmount) + "Chip.png");
+        Image image = new Image(file.toURI().toString());
+        ImageView betImageView = new ImageView(image);
+        betImageView.setFitWidth(width);
+        betImageView.setPreserveRatio(true);
+
+        return betImageView;
+    }
+
+    /**
+     * Helper method to create images for bet amount
+     * 
+     * @return BorderPane containing images
+     */
+    private BorderPane createBetImagesLayout() {
+        BorderPane boardMiddle = new BorderPane();
+
+        // Display mage view for bet amount
+        ImageView player1Bet = getBetImage(game.getPlayer1().getBet(), 60);
+        ImageView player2Bet = getBetImage(game.getPlayer2().getBet(), 60);
+        ImageView userBet = getBetImage(game.getHumanPlayer().getBet(), 60);
+
+        // Alignment bet image view center inside BorderPane boardMiddle
+        BorderPane.setAlignment(player1Bet, Pos.CENTER_RIGHT);
+        BorderPane.setAlignment(player2Bet, Pos.CENTER_LEFT);
+        BorderPane.setAlignment(userBet, Pos.CENTER);
+
+        // Set bet image location inside BorderPane boardMiddle
+        boardMiddle.setRight(player1Bet); // Player 2 bet
+        boardMiddle.setLeft(player2Bet); // Player 1 bet
+        boardMiddle.setBottom(userBet); // User bet
+
+        return boardMiddle;
+    }
+
+    /**
+     * Helper method to create turn label
+     * 
+     * @return Label for turn indication
+     */
+    private Label createTurnLabel() {
+        Label turnLabel = createLabel("Current Turn: " + game.getCurrentPlayer().getName());
+
+        // Hide turn indicator if round finish
+        if (sessionFinished == true) {
+            turnLabel.setVisible(false);
+            turnLabel.setManaged(false); // Remove label
+        }
+
+        return turnLabel;
+    }
+
+    /**
+     * Helper method to create label
+     * 
+     * @param message Message of label
+     * @return Label
+     */
+    private Label createLabel(String message) {
+        Label label = new Label(message);
+        label.setFont(new Font("Georgia", 20));
+        label.setTextFill(Color.WHITE);
+        return label;
+    }
+
+    /**
+     * Helper method to create BorderPane of player info
+     * 
+     * @param userBalanceLabel    User balance label
+     * @param player1BalanceLabel Player 1 balance label
+     * @param player2BalanceLabel Player 2 balance label
+     * @return BorderPane of player info
+     */
+    private BorderPane createPlayerInfoLayout(Label userBalanceLabel, Label player1BalanceLabel,
+            Label player2BalanceLabel) {
+        BorderPane playerInfo = new BorderPane();
+        playerInfo.setPadding(new Insets(20));
+
+        // VBox for each player
+        VBox userBox = new VBox(10);
+        VBox player1Box = new VBox(10);
+        VBox player2Box = new VBox(10);
+        VBox dealerBox = new VBox(10);
+
+        // Alignment for each user box inside BorderPane playerInfo
+        BorderPane.setAlignment(dealerBox, Pos.TOP_CENTER);
+        BorderPane.setAlignment(userBox, Pos.BOTTOM_CENTER);
+        BorderPane.setAlignment(player1Box, Pos.CENTER_RIGHT);
+        BorderPane.setAlignment(player2Box, Pos.CENTER_LEFT);
+
+        // Align each player VBox Center
+        userBox.setAlignment(Pos.CENTER);
+        player1Box.setAlignment(Pos.CENTER);
+        player2Box.setAlignment(Pos.CENTER);
+        dealerBox.setAlignment(Pos.CENTER);
+
+        // Add balance to each user VBox
+        userBox.getChildren().addAll(userBalanceLabel);
+        player1Box.getChildren().addAll(player1BalanceLabel);
+        player2Box.getChildren().addAll(player2BalanceLabel);
+
+        // Highlight current player VBox
+        highlightPlayerBox(game, dealerBox, userBox, player1Box, player2Box);
+
+        // Add dealer player name
+        Label dealerLabel = createLabel("Dealer");
+        dealerBox.getChildren().add(dealerLabel);
+
+        // Display cards
+        updateCardsDisplay(dealerBox, userBox, player1Box, player2Box);
+
+        // Set each player box to BorderPane
+        playerInfo.setBottom(userBox);
+        playerInfo.setRight(player1Box);
+        playerInfo.setLeft(player2Box);
+        playerInfo.setTop(dealerBox);
+
+        return playerInfo;
+    }
 }
