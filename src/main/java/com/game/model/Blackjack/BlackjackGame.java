@@ -1,7 +1,6 @@
 package com.game.model.Blackjack;
 
 import java.util.Base64;
-import java.util.List;
 
 public class BlackjackGame {
     private Deck deck;
@@ -95,58 +94,6 @@ public class BlackjackGame {
             default:
                 turn = "You";
                 break;
-        }
-    }
-
-    /**
-     * Method to calculate round result
-     */
-    public void calculateResults() {
-        int dealerValue = dealer.calculateHandValue();
-
-        // List of players to calculate result
-        List<Player> players = List.of(humanPlayer, player1, player2);
-
-        for (Player player : players) {
-            int playerValue = player.calculateHandValue();
-            int bet = player.getBet();
-
-            // Case 1: Player and Dealer both > 21
-            if (dealerValue > 21 && playerValue > 21) {
-                // Tie, lose and gain nothing
-                player.adjustBalance(0);
-            }
-
-            // Case 2: Player <= 21, Dealer > 21
-            else if (dealerValue > 21 && playerValue <= 21) {
-                // Win, Player gain bet
-                player.adjustBalance(bet);
-            }
-
-            // Case 3: Player > 21, Dealer <= 21
-            else if (dealerValue <= 21 && playerValue > 21) {
-                // Bust, Player lost bet
-                player.adjustBalance(-bet);
-            }
-
-            // Case 4: Dealer <= 21 && Player <= 21
-            else if (dealerValue <= 21 && playerValue <= 21) {
-                // Player value > Dealer value
-                if (playerValue > dealerValue) {
-                    // Win, Player gain bet
-                    player.adjustBalance(bet);
-                }
-                // PLayer value < Dealer value
-                else if (playerValue < dealerValue) {
-                    // Bust, Player lost bet
-                    player.adjustBalance(-bet);
-                }
-                // Player value = Dealer value
-                else {
-                    // Tie, Gain nothing
-                    player.adjustBalance(0);
-                }
-            }
         }
     }
 

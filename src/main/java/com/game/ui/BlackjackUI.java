@@ -186,14 +186,12 @@ public class BlackjackUI extends Application {
      * @param stage Current primary stage
      */
     private void updateUI(Stage stage) {
-        // Game finished reset for new game
-        if (sessionFinished) {
-            game.calculateResults();
-
-        }
 
         // Create the turn label
         Label turnLabel = createTurnLabel();
+
+        // Create bet images layout in BorderPane, calculate result if session finished
+        BorderPane boardMiddle = createBetImagesLayout();
 
         // Create balance labels for players
         Label userBalanceLabel = createLabel("Your Balance: $" + game.getHumanPlayer().getBalance());
@@ -203,9 +201,6 @@ public class BlackjackUI extends Application {
         // Create layout components
         BorderPane gameBox = new BorderPane();
         BorderPane playerInfo = createPlayerInfoLayout(userBalanceLabel, player1BalanceLabel, player2BalanceLabel);
-
-        // Create bet images layout in BorderPane
-        BorderPane boardMiddle = createBetImagesLayout();
 
         // Set boardMiddle at the center of BorderPane playerInfo
         playerInfo.setCenter(boardMiddle);
@@ -237,6 +232,7 @@ public class BlackjackUI extends Application {
         statusBox.getChildren().add(statusLabel);
         statusBox.setAlignment(Pos.CENTER);
 
+        // Set status box top of BorderPane gameBox
         gameBox.setTop(statusBox);
 
         // Set up the main layout
@@ -268,7 +264,7 @@ public class BlackjackUI extends Application {
         stage.centerOnScreen();
 
         // If game is not finished
-        if (sessionFinished == false) {
+        if (!sessionFinished) {
             handleBotTurn(stage);
         }
     }
@@ -310,8 +306,23 @@ public class BlackjackUI extends Application {
         pause.setOnFinished(event -> {
             Player currentPlayer = game.getCurrentPlayer();
 
+            boolean playerBlackjack = currentPlayer.calculateHandValue() == 21
+                    && currentPlayer.getHand().size() == 2;
+
+            // If player have blackjack
+            if (playerBlackjack) {
+                updateStatus(currentPlayer.getName() + " Blackjack!");
+
+                // If Dealer stop, don't go next turn
+                if (currentPlayer.getName().equals("Dealer")) {
+                    sessionFinished = true;
+                } else {
+                    game.nextTurn();
+                }
+            }
+
             // Player busts if hand value > 21
-            if (currentPlayer.calculateHandValue() > 21) {
+            else if (currentPlayer.calculateHandValue() > 21) {
                 updateStatus(currentPlayer.getName() + " Bust!");
 
                 if (currentPlayer.getName().equals("Dealer")) {
@@ -455,15 +466,32 @@ public class BlackjackUI extends Application {
             }
             // User have bet
             else {
+                boolean playerBlackjack = game.getHumanPlayer().calculateHandValue() == 21
+                        && game.getHumanPlayer().getHand().size() == 2;
+
+                // If user have blackjack
+                if (playerBlackjack) {
+                    updateStatus(user.getName() + " Blackjack!");
+                    gameManagerController.showAlert("Invalid move!", "You have blackjack!");
+                }
                 // Check if user busted
-                if (user.calculateHandValue() > 21) {
+                else if (user.calculateHandValue() > 21) {
                     gameManagerController.showAlert("Busted!", "You have gone over 21!");
-                } else {
+                }
+                // Hand value <= 21
+                else {
+                    // If hand size < 5
                     if (user.getHand().size() < 5) {
                         updateStatus("You hit!");
                         user.takeTurn(game.getDeck());
+
+                        if (user.calculateHandValue() > 21) {
+                            updateStatus(user.getName() + " Busted!");
+                        }
                         updateUI(stage);
-                    } else {
+                    }
+                    // Hand size >= 5
+                    else {
                         gameManagerController.showAlert("Limit reached!", "You have reached limit of 5 cards!");
                     }
                 }
@@ -752,10 +780,33 @@ public class BlackjackUI extends Application {
         BorderPane.setAlignment(player2Bet, Pos.CENTER_LEFT);
         BorderPane.setAlignment(userBet, Pos.CENTER);
 
-        // Set bet image location inside BorderPane boardMiddle
-        boardMiddle.setRight(player1Bet); // Player 2 bet
-        boardMiddle.setLeft(player2Bet); // Player 1 bet
-        boardMiddle.setBottom(userBet); // User bet
+        // If session finished
+        if (sessionFinished) {
+            Label player1Result = calculateResults(game.getPlayer1());
+            player1Result.setTextFill(Color.RED);
+
+            Label player2Result = calculateResults(game.getPlayer2());
+            player2Result.setTextFill(Color.RED);
+
+            Label userResult = calculateResults(game.getHumanPlayer());
+            userResult.setTextFill(Color.RED);
+
+            // Set location for label
+            boardMiddle.setRight(player1Result);
+            boardMiddle.setLeft(player2Result);
+            boardMiddle.setBottom(userResult);
+
+            // Alignment bet image view center inside BorderPane boardMiddle
+            BorderPane.setAlignment(player1Result, Pos.CENTER_RIGHT);
+            BorderPane.setAlignment(player2Result, Pos.CENTER_LEFT);
+            BorderPane.setAlignment(userResult, Pos.CENTER);
+
+        } else {
+            // Set bet image location inside BorderPane boardMiddle
+            boardMiddle.setRight(player1Bet); // Player 2 bet
+            boardMiddle.setLeft(player2Bet); // Player 1 bet
+            boardMiddle.setBottom(userBet); // User bet
+        }
 
         return boardMiddle;
     }
@@ -843,5 +894,74 @@ public class BlackjackUI extends Application {
         playerInfo.setTop(dealerBox);
 
         return playerInfo;
+    }
+
+    /**
+     * Helper method to calculate player result
+     * 
+     * @param player Player to be calculated
+     */
+    private Label calculateResults(Player player) {
+        int dealerValue = game.getDealer().calculateHandValue();
+        int playerValue = player.calculateHandValue();
+        int bet = player.getBet();
+        Label label = new Label();
+
+        boolean playerBlackjack = playerValue == 21 && player.getHand().size() == 2;
+        boolean dealerBlackjack = dealerValue == 21 && game.getDealer().getHand().size() == 2;
+
+        // Case 1: Player and Dealer both > 21
+        if (dealerValue > 21 && playerValue > 21) {
+            // Tie, lose and gain nothing
+            player.adjustBalance(-bet);
+            label = createLabel(player.getName() + " Lose!");
+        }
+
+        // Case 2: Player <= 21, Dealer > 21
+        else if (dealerValue > 21 && playerValue <= 21) {
+            // Win, Player gain bet
+            player.adjustBalance(bet);
+            label = createLabel(player.getName() + " Win!");
+        }
+
+        // Case 3: Player > 21, Dealer <= 21
+        else if (dealerValue <= 21 && playerValue > 21) {
+            // Bust, Player lost bet
+            player.adjustBalance(-bet);
+            label = createLabel(player.getName() + " Lost!");
+        }
+
+        // Case 4: Dealer <= 21 && Player <= 21
+        else if (dealerValue <= 21 && playerValue <= 21) {
+            // Case 5: Player blackjack
+            if (playerBlackjack && !dealerBlackjack) {
+                player.adjustBalance(bet); // Player win
+                label = createLabel(player.getName() + " Win!");
+            }
+            // Case 6: Dealer blackjack
+            else if (dealerBlackjack && !playerBlackjack) {
+                player.adjustBalance(-bet);
+                label = createLabel(player.getName() + " Lose!");
+            }
+            // Case 7: Player value > Dealer value
+            else if (playerValue > dealerValue) {
+                // Win, Player gain bet
+                player.adjustBalance(bet);
+                label = createLabel(player.getName() + " Win!");
+            }
+            // Case 8: PLayer value < Dealer value
+            else if (playerValue < dealerValue) {
+                // Bust, Player lost bet
+                player.adjustBalance(-bet);
+                label = createLabel(player.getName() + " Lost!");
+            }
+            // Case 9: Player value = Dealer value
+            else {
+                // Tie, Gain nothing
+                player.adjustBalance(0);
+                label = createLabel(player.getName() + " Tie!");
+            }
+        }
+        return label;
     }
 }
