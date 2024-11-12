@@ -214,7 +214,7 @@ public class BlackjackUI extends Application {
         playerInfo.setTop(dealerBox);
 
         // Add image for deck
-        addDeckImage(gameBox, playerInfo);
+        playerInfo.setCenter(getCardBackImageView(80));
 
         // HBox for game action
         HBox gameActionBox = new HBox(30);
@@ -231,6 +231,9 @@ public class BlackjackUI extends Application {
 
         // Add action box to turn and action box
         turnAndAction.getChildren().add(gameActionBox);
+
+        // Add playerInfo to center of gameBox
+        gameBox.setCenter(playerInfo);
 
         // Set gameActionBox, at the bottom of game screen
         gameBox.setBottom(turnAndAction);
@@ -584,7 +587,87 @@ public class BlackjackUI extends Application {
     }
 
     /**
-     * Method to display player card
+     * Helper method to create card image view
+     * 
+     * @param card     Card to create
+     * @param rotation Rotation needed
+     * @param width    Width of card
+     * @return ImageView of card
+     */
+    private ImageView createCardImageView(Card card, double rotation, int width) {
+        File file = new File("images/" + card.toString().toLowerCase() + ".png");
+        Image image = new Image(file.toURI().toString());
+        ImageView cardImageView = new ImageView(image);
+        cardImageView.setFitWidth(width);
+        cardImageView.setPreserveRatio(true);
+        cardImageView.setRotate(rotation);
+        return cardImageView;
+    }
+
+    /**
+     * Helper method to create HBox containing bot cards
+     * 
+     * @param hand Bot list of card
+     * @return HBox with bot cards
+     */
+    private VBox createBotCardsBox(List<Card> hand) {
+        VBox cardsBox = new VBox(10);
+        cardsBox.setAlignment(Pos.CENTER);
+
+        for (Card card : hand) {
+            // Using Group to apply rotation to avoid extra space from rotating
+            Group rotatedGroup = new Group(createCardImageView(card, 90, 70));
+
+            cardsBox.getChildren().add(rotatedGroup);
+        }
+        return cardsBox;
+    }
+
+    /**
+     * Helper method to create HBox containing dealer cards
+     * 
+     * @param hand Dealer list of card
+     * @return HBox with dealer cards
+     */
+    private HBox createDealerCardsBox(List<Card> hand) {
+        HBox dealerCardsBox = new HBox(10);
+        dealerCardsBox.setAlignment(Pos.CENTER);
+
+        // Show all dealer cards except the 2nd one until turn over
+        for (int i = 0; i < hand.size(); i++) {
+            ImageView cardImageView = createCardImageView(hand.get(i), 0, 70);
+
+            // Hide 2nd card if not dealer turn
+            if (i == 1 && sessionFinished == false) {
+                cardImageView = getCardBackImageView(70);
+            }
+            dealerCardsBox.getChildren().add(cardImageView);
+        }
+
+        return dealerCardsBox;
+    }
+
+    /**
+     * 
+     * Helper method to create HBox containing user cards
+     * 
+     * @param hand User list of card
+     * @return HBox with user cards
+     */
+    private HBox createUserCardsBox(List<Card> hand) {
+        // Create labels or images for the cards in the user's hand
+        HBox userCardsBox = new HBox(10);
+        userCardsBox.setAlignment(Pos.CENTER);
+
+        // Displaying card for user
+        for (Card card : game.getHumanPlayer().getHand()) {
+            userCardsBox.getChildren().add(createCardImageView(card, 0, 70));
+        }
+        return userCardsBox;
+    }
+
+    /**
+     * Helper method to display player card
      * 
      * @param dealerBox  VBox info for dealer
      * @param userBox    VBox info for user
@@ -592,109 +675,11 @@ public class BlackjackUI extends Application {
      * @param player2Box VBox info for player 2
      */
     private void updateCardsDisplay(VBox dealerBox, VBox userBox, VBox player1Box, VBox player2Box) {
-        // Create labels or images for the cards in the user's hand
-        HBox playerCardsBox = new HBox(10);
-        playerCardsBox.setAlignment(Pos.CENTER);
 
-        // Displaying card for user
-        for (Card card : game.getHumanPlayer().getHand()) {
-
-            // Match card with its image
-            File file = new File("images/" + card.toString().toLowerCase() + ".png");
-            Image image = new Image(file.toURI().toString());
-            ImageView cardImageView = new ImageView(image);
-
-            // Adjust card size
-            cardImageView.setFitWidth(70);
-            cardImageView.setPreserveRatio(true);
-
-            playerCardsBox.getChildren().add(cardImageView);
-        }
-
-        // Create labels or images for the cards in the dealer's hand
-        HBox dealerCardsBox = new HBox(10);
-        dealerCardsBox.setAlignment(Pos.CENTER);
-
-        List<Card> dealerHand = game.getDealer().getHand();
-
-        // Show all dealer cards except the 2nd one until turn over
-        for (int i = 0; i < dealerHand.size(); i++) {
-            // Match card with its image
-            File file = new File("images/" + dealerHand.get(i).toString().toLowerCase() + ".png");
-            Image image = new Image(file.toURI().toString());
-            ImageView cardImageView = new ImageView(image);
-
-            // Adjust card size
-            cardImageView.setFitWidth(70);
-            cardImageView.setPreserveRatio(true);
-
-            // Hide 2nd card if not dealer turn
-            if (i == 1 && sessionFinished == false) {
-                // Match card with its image
-                file = new File("images/redback.png");
-                image = new Image(file.toURI().toString());
-                cardImageView = new ImageView(image);
-
-                // Adjust card size
-                cardImageView.setFitWidth(75);
-                cardImageView.setPreserveRatio(true);
-            }
-            dealerCardsBox.getChildren().add(cardImageView);
-        }
-
-        // Create labels or images for the cards in the player1's hand
-        VBox player1CardsBox = new VBox(10);
-        player1CardsBox.setAlignment(Pos.CENTER);
-
-        for (Card card : game.getPlayer1().getHand()) {
-
-            // Match card with its image
-            File file = new File("images/" + card.toString().toLowerCase() + ".png");
-            Image image = new Image(file.toURI().toString());
-            ImageView cardImageView = new ImageView(image);
-
-            // Adjust card size
-            cardImageView.setFitWidth(70);
-            cardImageView.setPreserveRatio(true);
-
-            // Rotate the image 90 degrees
-            cardImageView.setRotate(90);
-
-            // Using Group to apply rotation to avoid extra space from rotating
-            Group rotatedGroup = new Group(cardImageView);
-
-            player1CardsBox.getChildren().add(rotatedGroup);
-        }
-
-        // Create labels or images for the cards in the player2's hand
-        VBox player2CardsBox = new VBox(10);
-        player2CardsBox.setAlignment(Pos.CENTER);
-
-        for (Card card : game.getPlayer2().getHand()) {
-
-            // Match card with its image
-            File file = new File("images/" + card.toString().toLowerCase() + ".png");
-            Image image = new Image(file.toURI().toString());
-            ImageView cardImageView = new ImageView(image);
-
-            // Adjust card size
-            cardImageView.setFitWidth(70);
-            cardImageView.setPreserveRatio(true);
-
-            // Rotate the image 90 degrees
-            cardImageView.setRotate(90);
-
-            // Using Group to apply rotation to avoid extra space from rotating
-            Group rotatedGroup = new Group(cardImageView);
-
-            player2CardsBox.getChildren().add(rotatedGroup);
-        }
-
-        userBox.getChildren().add(playerCardsBox);
-        player1Box.getChildren().add(player1CardsBox);
-        player2Box.getChildren().add(player2CardsBox);
-        dealerBox.getChildren().add(dealerCardsBox);
-
+        userBox.getChildren().add(createUserCardsBox(game.getHumanPlayer().getHand()));
+        player1Box.getChildren().add(createBotCardsBox(game.getPlayer1().getHand()));
+        player2Box.getChildren().add(createBotCardsBox(game.getPlayer2().getHand()));
+        dealerBox.getChildren().add(createDealerCardsBox(game.getDealer().getHand()));
     }
 
     /**
@@ -759,18 +744,16 @@ public class BlackjackUI extends Application {
      * @param gameBox    BorderPane for game information
      * @param playerInfo BorderPane for player information
      */
-    private void addDeckImage(BorderPane gameBox, BorderPane playerInfo) {
-        File file = new File("images/redback.png");
+    private ImageView getCardBackImageView(int width) {
+        File file = new File("images/back.png");
         Image image = new Image(file.toURI().toString());
-        ImageView deckImageView = new ImageView(image);
+        ImageView backImageView = new ImageView(image);
 
         // Adjust deck size
-        deckImageView.setFitWidth(80);
-        deckImageView.setPreserveRatio(true);
-        playerInfo.setCenter(deckImageView);
+        backImageView.setFitWidth(width);
+        backImageView.setPreserveRatio(true);
 
-        // Elements to BorderPane gameBox
-        gameBox.setCenter(playerInfo); // Player session
+        return backImageView;
     }
 
     /**
@@ -780,7 +763,7 @@ public class BlackjackUI extends Application {
      */
     private void setBackgroundImage(AnchorPane blackjackGame) {
         // Set background image
-        File backgroundFile = new File("images/background.jpg");
+        File backgroundFile = new File("images/background2.jpg");
         Image backgroundImage = new Image(backgroundFile.toURI().toString());
         ImageView imageView = new ImageView(backgroundImage);
 
