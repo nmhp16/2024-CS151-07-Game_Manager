@@ -80,8 +80,12 @@ public class LoginPageUI {
         loginPage.setCenter(vbox);
 
         // Set up button actions with controller
-        loginButton.setOnAction(event -> controller.handleLogin(usernameField.getText(), passwordField.getText()));
-        createAccountButton
-                .setOnAction(event -> controller.handleCreateAccount(usernameField.getText(), passwordField.getText()));
+        loginButton.setOnAction(event -> {
+            GameManagerController.username = usernameField.getText(); // Set username controller
+            controller.handleLogin(usernameField.getText(), passwordField.getText());
+        });
+        createAccountButton.setOnAction(event -> {
+            controller.handleCreateAccount(usernameField.getText(), passwordField.getText());
+        });
     }
 }
