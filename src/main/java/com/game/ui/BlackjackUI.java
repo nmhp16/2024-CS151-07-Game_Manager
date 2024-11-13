@@ -782,13 +782,13 @@ public class BlackjackUI extends Application {
 
         // If session finished
         if (sessionFinished) {
-            Label player1Result = calculateResults(game.getPlayer1());
+            Label player1Result = createLabel(game.calculateResults(game.getPlayer1()));
             player1Result.setTextFill(Color.RED);
 
-            Label player2Result = calculateResults(game.getPlayer2());
+            Label player2Result = createLabel(game.calculateResults(game.getPlayer2()));
             player2Result.setTextFill(Color.RED);
 
-            Label userResult = calculateResults(game.getHumanPlayer());
+            Label userResult = createLabel(game.calculateResults(game.getHumanPlayer()));
             userResult.setTextFill(Color.RED);
 
             // Set location for label
@@ -896,72 +896,4 @@ public class BlackjackUI extends Application {
         return playerInfo;
     }
 
-    /**
-     * Helper method to calculate player result
-     * 
-     * @param player Player to be calculated
-     */
-    private Label calculateResults(Player player) {
-        int dealerValue = game.getDealer().calculateHandValue();
-        int playerValue = player.calculateHandValue();
-        int bet = player.getBet();
-        Label label = new Label();
-
-        boolean playerBlackjack = playerValue == 21 && player.getHand().size() == 2;
-        boolean dealerBlackjack = dealerValue == 21 && game.getDealer().getHand().size() == 2;
-
-        // Case 1: Player and Dealer both > 21
-        if (dealerValue > 21 && playerValue > 21) {
-            // Tie, lose and gain nothing
-            player.adjustBalance(-bet);
-            label = createLabel(player.getName() + " Lose!");
-        }
-
-        // Case 2: Player <= 21, Dealer > 21
-        else if (dealerValue > 21 && playerValue <= 21) {
-            // Win, Player gain bet
-            player.adjustBalance(bet);
-            label = createLabel(player.getName() + " Win!");
-        }
-
-        // Case 3: Player > 21, Dealer <= 21
-        else if (dealerValue <= 21 && playerValue > 21) {
-            // Bust, Player lost bet
-            player.adjustBalance(-bet);
-            label = createLabel(player.getName() + " Lost!");
-        }
-
-        // Case 4: Dealer <= 21 && Player <= 21
-        else if (dealerValue <= 21 && playerValue <= 21) {
-            // Case 5: Player blackjack
-            if (playerBlackjack && !dealerBlackjack) {
-                player.adjustBalance(bet); // Player win
-                label = createLabel(player.getName() + " Win!");
-            }
-            // Case 6: Dealer blackjack
-            else if (dealerBlackjack && !playerBlackjack) {
-                player.adjustBalance(-bet);
-                label = createLabel(player.getName() + " Lose!");
-            }
-            // Case 7: Player value > Dealer value
-            else if (playerValue > dealerValue) {
-                // Win, Player gain bet
-                player.adjustBalance(bet);
-                label = createLabel(player.getName() + " Win!");
-            }
-            // Case 8: PLayer value < Dealer value
-            else if (playerValue < dealerValue) {
-                // Bust, Player lost bet
-                player.adjustBalance(-bet);
-                label = createLabel(player.getName() + " Lost!");
-            }
-            // Case 9: Player value = Dealer value
-            else {
-                // Tie, Gain nothing
-                player.adjustBalance(0);
-                label = createLabel(player.getName() + " Tie!");
-            }
-        }
-        return label;
-    }
 }

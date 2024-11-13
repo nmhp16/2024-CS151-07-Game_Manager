@@ -187,6 +187,76 @@ public class BlackjackGame {
         }
     }
 
+    /**
+     * Method to calculate player result
+     * 
+     * @param player Player to be calculated
+     * @return String message result
+     */
+    public String calculateResults(Player player) {
+        int dealerValue = dealer.calculateHandValue();
+        int playerValue = player.calculateHandValue();
+        int bet = player.getBet();
+        String message = "";
+
+        boolean playerBlackjack = playerValue == 21 && player.getHand().size() == 2;
+        boolean dealerBlackjack = dealerValue == 21 && dealer.getHand().size() == 2;
+
+        // Case 1: Player and Dealer both > 21
+        if (dealerValue > 21 && playerValue > 21) {
+            // Tie, lose and gain nothing
+            player.adjustBalance(-bet);
+            message = player.getName() + " Lose!";
+        }
+
+        // Case 2: Player <= 21, Dealer > 21
+        else if (dealerValue > 21 && playerValue <= 21) {
+            // Win, Player gain bet
+            player.adjustBalance(bet);
+            message = player.getName() + " Win!";
+        }
+
+        // Case 3: Player > 21, Dealer <= 21
+        else if (dealerValue <= 21 && playerValue > 21) {
+            // Bust, Player lost bet
+            player.adjustBalance(-bet);
+            message = player.getName() + " Lost!";
+        }
+
+        // Case 4: Dealer <= 21 && Player <= 21
+        else if (dealerValue <= 21 && playerValue <= 21) {
+            // Case 5: Player blackjack
+            if (playerBlackjack && !dealerBlackjack) {
+                player.adjustBalance(bet); // Player win
+                message = player.getName() + " Win!";
+            }
+            // Case 6: Dealer blackjack
+            else if (dealerBlackjack && !playerBlackjack) {
+                player.adjustBalance(-bet);
+                message = player.getName() + " Lose!";
+            }
+            // Case 7: Player value > Dealer value
+            else if (playerValue > dealerValue) {
+                // Win, Player gain bet
+                player.adjustBalance(bet);
+                message = player.getName() + " Win!";
+            }
+            // Case 8: PLayer value < Dealer value
+            else if (playerValue < dealerValue) {
+                // Bust, Player lost bet
+                player.adjustBalance(-bet);
+                message = player.getName() + " Lost!";
+            }
+            // Case 9: Player value = Dealer value
+            else {
+                // Tie, Gain nothing
+                player.adjustBalance(0);
+                message = player.getName() + " Tie!";
+            }
+        }
+        return message;
+    }
+
     // Getters
     public Player getHumanPlayer() {
         return humanPlayer;
