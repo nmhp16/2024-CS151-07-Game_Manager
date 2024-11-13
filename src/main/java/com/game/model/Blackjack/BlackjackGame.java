@@ -134,8 +134,10 @@ public class BlackjackGame {
      * Method to load saveStateString to recover game state
      * 
      * @param saveStateString Saved game state string
+     * @return True if valid
+     *         False otherwise
      */
-    public void loadGameState(String saveStateString) {
+    public boolean loadGameState(String saveStateString) {
         // Decode Base64 encoded string
         String decodedState = new String(Base64.getDecoder().decode(saveStateString));
 
@@ -143,47 +145,133 @@ public class BlackjackGame {
 
         for (String entry : entries) {
             String[] keyValue = entry.split(":");
+
+            if (keyValue.length != 2) {
+                return false; // Invalid key format
+            }
+
             String key = keyValue[0];
             String value = keyValue[1];
 
             switch (key) {
                 case "turn":
+                    if (!isValidTurn(value)) {
+                        return false;
+                    }
                     turn = value;
                     break;
                 case "humanCards":
-                    humanPlayer.setHandFromString(value);
+                    if (!humanPlayer.setHandFromString(value)) {
+                        return false;
+                    }
                     break;
                 case "player1Cards":
-                    player1.setHandFromString(value);
+                    if (!player1.setHandFromString(value)) {
+                        return false;
+                    }
                     break;
                 case "player2Cards":
-                    player2.setHandFromString(value);
+                    if (!player2.setHandFromString(value)) {
+                        return false;
+                    }
                     break;
                 case "dealerCards":
-                    dealer.setHandFromString(value);
+                    if (!dealer.setHandFromString(value)) {
+                        return false;
+                    }
                     break;
                 case "humanBalance":
+                    if (!isValidBalance(value)) {
+                        return false;
+                    }
                     humanPlayer.setBalance(Integer.parseInt(value));
                     break;
                 case "player1Balance":
+                    if (!isValidBalance(value)) {
+                        return false;
+                    }
                     player1.setBalance(Integer.parseInt(value));
                     break;
                 case "player2Balance":
+                    if (!isValidBalance(value)) {
+                        return false;
+                    }
                     player2.setBalance(Integer.parseInt(value));
                     break;
                 case "dealerBalance":
+                    if (!isValidBalance(value)) {
+                        return false;
+                    }
                     dealer.setBalance(Integer.parseInt(value));
                     break;
                 case "humanBet":
+                    if (!isValidBet(value)) {
+                        return false;
+                    }
                     humanPlayer.setBet(Integer.parseInt(value));
                     break;
                 case "player1Bet":
+                    if (!isValidBet(value)) {
+                        return false;
+                    }
                     player1.setBet(Integer.parseInt(value));
                     break;
                 case "player2Bet":
+                    if (!isValidBet(value)) {
+                        return false;
+                    }
                     player2.setBet(Integer.parseInt(value));
                     break;
             }
+        }
+        return true;
+    }
+
+    /**
+     * Helper method to check if saved state turn is valid
+     * 
+     * @param value Saved state string for turn
+     * @return True if valid
+     *         False otherwise
+     */
+    private boolean isValidTurn(String value) {
+        if (value.equalsIgnoreCase("You") || value.equalsIgnoreCase("Player 1")
+                || value.equalsIgnoreCase("Player 2")) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * Helper method to check if saved state balance valid
+     * 
+     * @param value Saved state string for balance
+     * @return True if valid
+     *         False otherwise
+     */
+    private boolean isValidBalance(String value) {
+        try {
+            int balance = Integer.parseInt(value);
+            return balance >= 0; // Non-negative balance
+        } catch (NumberFormatException e) {
+            return false;
+        }
+    }
+
+    /**
+     * Helper method to check if saved state bet is valid
+     * 
+     * @param value Saved state string for bet
+     * @return True if valid
+     *         False otherwise
+     */
+    private boolean isValidBet(String value) {
+        try {
+            int bet = Integer.parseInt(value);
+            return bet >= 0;
+        } catch (NumberFormatException e) {
+            return false;
         }
     }
 
