@@ -23,7 +23,7 @@ public class SnakeUI extends Application {
 
         public static int block_size = 15;
         int width = 70, height = 50;
-        int il = 1;
+        int il = 2;
 
     long then = System.nanoTime();
 
@@ -46,7 +46,7 @@ public class SnakeUI extends Application {
         //speed control for the snake
         AnimationTimer timer = new AnimationTimer(){
             public void handle(long now){
-                if (now - then > 1000000000/2){
+                if (now - then > 100000000/2){
                         f.update();
                         then = now;
                         score.setText("Score: "+f.score);
