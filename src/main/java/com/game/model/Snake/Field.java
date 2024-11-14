@@ -43,10 +43,11 @@ public class Field extends Pane {
     }
 
     public void update(){
+        
         for (Block b:blocks){
             b.update();
 
-    }
+     }
     
     if(isEaten(f)){
         score += 20; 
@@ -54,9 +55,18 @@ public class Field extends Pane {
         addNewBlock();
 
     }
+
+
 }
 
+
+
     public boolean isDead() { 
+
+        if (snake.head.posX < 0 || snake.head.posX >= w || snake.head.posY < 0 || snake.head.posY >= h) {
+            return true;
+            }
+        
         for (Block b:blocks){
             if (b != snake.head){
                 if(b.posX == snake.head.posX && b.posY == snake.head.posY){
@@ -90,6 +100,8 @@ public class Field extends Pane {
         f = food;
 
     }
+
+
 
     public boolean isEaten(Food f){
         if (f == null){

@@ -15,6 +15,8 @@ public class Block extends Rectangle{
     int direction = LEFT;
     int maxX, maxY;
 
+    
+
     public Block(int x, int y, Block p , Field f){
         super(SnakeUI.block_size, SnakeUI.block_size);
         posX = x;
@@ -89,4 +91,6 @@ public class Block extends Rectangle{
         setTranslateY(posY * SnakeUI.block_size);
 
     }
+
+    
 }

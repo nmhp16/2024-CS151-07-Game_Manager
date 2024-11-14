@@ -37,4 +37,6 @@ public class Snake {
         return head.direction;
     }
 
+    
+
 } 

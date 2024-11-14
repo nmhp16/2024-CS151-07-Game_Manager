@@ -6,7 +6,6 @@ import com.game.model.Snake.Snake;
 
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
-import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
@@ -22,9 +21,9 @@ import javafx.stage.Stage;
 
 public class SnakeUI extends Application {
 
-        public static int block_size = 10;
-        int width = 30, height = 15;
-        int il = 5;
+        public static int block_size = 15;
+        int width = 70, height = 50;
+        int il = 1;
 
     long then = System.nanoTime();
 
@@ -47,7 +46,7 @@ public class SnakeUI extends Application {
         //speed control for the snake
         AnimationTimer timer = new AnimationTimer(){
             public void handle(long now){
-                if (now - then > 100000000/2){
+                if (now - then > 1000000000/2){
                         f.update();
                         then = now;
                         score.setText("Score: "+f.score);
@@ -62,8 +61,7 @@ public class SnakeUI extends Application {
                                 Alert al = new Alert(AlertType.INFORMATION);
                                 al.setHeaderText("YOUR SNAKE DIED");
                                 al.setContentText("Score reached : "+f.score);
-                                al.showAndWait();
-                                Platform.runLater(al::showAndWait);
+                                al.show();
 
                         al.setOnHidden(e->{
                                 gameVBox.getChildren().clear();
