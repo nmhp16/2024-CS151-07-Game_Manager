@@ -3,11 +3,13 @@ package com.game.ui;
 import com.game.model.Snake.Field;
 import com.game.model.Snake.Snake;
 
+import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+
 
 
 // TODO: Complete Snake game UI
@@ -25,17 +27,23 @@ public class SnakeUI extends Application {
         Field f = new Field(width, height);
         f.addSnake(new Snake(il,f));
 
+        AnimationTimer timer = new AnimationTimer(){
+            public void handle(long now){
+            f.update();
+            }
+        };
+        timer.start();
 
         gameVBox.getChildren().add(f);
 
-            Scene scene = new Scene(gameVBox);
+        Scene scene = new Scene(gameVBox);
 
-            ps.setResizable(false);
-            ps.setScene(scene);
+        ps.setResizable(false);
+        ps.setScene(scene);
 
-            ps.setTitle("Snake Game");
+        ps.setTitle("Snake Game");
 
-            ps.show();
+        ps.show();
 
 
     }

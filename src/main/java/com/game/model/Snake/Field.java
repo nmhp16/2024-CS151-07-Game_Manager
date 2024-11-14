@@ -38,6 +38,13 @@ public class Field extends Pane{
         }
     }
 
+    public void update(){
+        for (Block b:blocks){
+            b.update();
+
+    }
+
+    }
     private void addBlock(Block b){
         getChildren().add(b);
         blocks.add(b);
