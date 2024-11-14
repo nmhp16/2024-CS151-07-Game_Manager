@@ -1,9 +1,4 @@
-<<<<<<< HEAD:src/main/java/com/game/model/Snake/Field.java
 package com.game.model.Snake;
-=======
-package com.game.model.SnakeGame;
-
->>>>>>> a56e1fdb6349a82193d0484eab8f675c55c7c694:src/main/java/com/game/model/SnakeGame/Field.java
 import java.util.ArrayList;
 
 import com.game.ui.SnakeUI;
@@ -40,7 +35,6 @@ public class Field extends Pane {
         }
     }
 
-<<<<<<< HEAD:src/main/java/com/game/model/Snake/Field.java
     public void update(){
         for (Block b:blocks){
             b.update();
@@ -49,9 +43,6 @@ public class Field extends Pane {
 
     }
     private void addBlock(Block b){
-=======
-    private void addBlock(Block b) {
->>>>>>> a56e1fdb6349a82193d0484eab8f675c55c7c694:src/main/java/com/game/model/SnakeGame/Field.java
         getChildren().add(b);
         blocks.add(b);
 
