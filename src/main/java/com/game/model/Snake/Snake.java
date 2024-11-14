@@ -2,24 +2,24 @@ package com.game.model.Snake;
 
 import java.util.ArrayList;
 
-public class Snake{ 
+public class Snake {
 
     ArrayList<Block> blocks = new ArrayList<Block>();
 
-    Block head; 
+    Block head;
 
-    public Snake(int il, Field f){
-        int ipx = f.getW()/2;
-        int ipy = f.getH()/2; 
+    public Snake(int il, Field f) {
+        int ipx = f.getW() / 2;
+        int ipy = f.getH() / 2;
 
-        head = new Block(ipx,ipy,null);
-        
+        head = new Block(ipx, ipy, null);
+
         Block previous = head;
 
-        for(int i = 1; i < il; i++) { 
+        for (int i = 1; i < il; i++) {
             Block b = new Block(ipx + i, ipy, previous);
             blocks.add(b);
-            previous = b; 
+            previous = b;
 
         }
     }
