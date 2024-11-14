@@ -138,93 +138,98 @@ public class BlackjackGame {
      *         False otherwise
      */
     public boolean loadGameState(String saveStateString) {
-        // Decode Base64 encoded string
-        String decodedState = new String(Base64.getDecoder().decode(saveStateString));
+        try {
+            // Decode Base64 encoded string
+            String decodedState = new String(Base64.getDecoder().decode(saveStateString));
 
-        String[] entries = decodedState.split("\\|");
+            String[] entries = decodedState.split("\\|");
 
-        for (String entry : entries) {
-            String[] keyValue = entry.split(":");
+            for (String entry : entries) {
+                String[] keyValue = entry.split(":");
 
-            if (keyValue.length != 2) {
-                return false; // Invalid key format
+                if (keyValue.length != 2) {
+                    return false; // Invalid key format
+                }
+
+                String key = keyValue[0];
+                String value = keyValue[1];
+
+                switch (key) {
+                    case "turn":
+                        if (!isValidTurn(value)) {
+                            return false;
+                        }
+                        turn = value;
+                        break;
+                    case "humanCards":
+                        if (!humanPlayer.setHandFromString(value)) {
+                            return false;
+                        }
+                        break;
+                    case "player1Cards":
+                        if (!player1.setHandFromString(value)) {
+                            return false;
+                        }
+                        break;
+                    case "player2Cards":
+                        if (!player2.setHandFromString(value)) {
+                            return false;
+                        }
+                        break;
+                    case "dealerCards":
+                        if (!dealer.setHandFromString(value)) {
+                            return false;
+                        }
+                        break;
+                    case "humanBalance":
+                        if (!isValidBalance(value)) {
+                            return false;
+                        }
+                        humanPlayer.setBalance(Integer.parseInt(value));
+                        break;
+                    case "player1Balance":
+                        if (!isValidBalance(value)) {
+                            return false;
+                        }
+                        player1.setBalance(Integer.parseInt(value));
+                        break;
+                    case "player2Balance":
+                        if (!isValidBalance(value)) {
+                            return false;
+                        }
+                        player2.setBalance(Integer.parseInt(value));
+                        break;
+                    case "dealerBalance":
+                        if (!isValidBalance(value)) {
+                            return false;
+                        }
+                        dealer.setBalance(Integer.parseInt(value));
+                        break;
+                    case "humanBet":
+                        if (!isValidBet(value)) {
+                            return false;
+                        }
+                        humanPlayer.setBet(Integer.parseInt(value));
+                        break;
+                    case "player1Bet":
+                        if (!isValidBet(value)) {
+                            return false;
+                        }
+                        player1.setBet(Integer.parseInt(value));
+                        break;
+                    case "player2Bet":
+                        if (!isValidBet(value)) {
+                            return false;
+                        }
+                        player2.setBet(Integer.parseInt(value));
+                        break;
+                }
             }
+            return true;
 
-            String key = keyValue[0];
-            String value = keyValue[1];
-
-            switch (key) {
-                case "turn":
-                    if (!isValidTurn(value)) {
-                        return false;
-                    }
-                    turn = value;
-                    break;
-                case "humanCards":
-                    if (!humanPlayer.setHandFromString(value)) {
-                        return false;
-                    }
-                    break;
-                case "player1Cards":
-                    if (!player1.setHandFromString(value)) {
-                        return false;
-                    }
-                    break;
-                case "player2Cards":
-                    if (!player2.setHandFromString(value)) {
-                        return false;
-                    }
-                    break;
-                case "dealerCards":
-                    if (!dealer.setHandFromString(value)) {
-                        return false;
-                    }
-                    break;
-                case "humanBalance":
-                    if (!isValidBalance(value)) {
-                        return false;
-                    }
-                    humanPlayer.setBalance(Integer.parseInt(value));
-                    break;
-                case "player1Balance":
-                    if (!isValidBalance(value)) {
-                        return false;
-                    }
-                    player1.setBalance(Integer.parseInt(value));
-                    break;
-                case "player2Balance":
-                    if (!isValidBalance(value)) {
-                        return false;
-                    }
-                    player2.setBalance(Integer.parseInt(value));
-                    break;
-                case "dealerBalance":
-                    if (!isValidBalance(value)) {
-                        return false;
-                    }
-                    dealer.setBalance(Integer.parseInt(value));
-                    break;
-                case "humanBet":
-                    if (!isValidBet(value)) {
-                        return false;
-                    }
-                    humanPlayer.setBet(Integer.parseInt(value));
-                    break;
-                case "player1Bet":
-                    if (!isValidBet(value)) {
-                        return false;
-                    }
-                    player1.setBet(Integer.parseInt(value));
-                    break;
-                case "player2Bet":
-                    if (!isValidBet(value)) {
-                        return false;
-                    }
-                    player2.setBet(Integer.parseInt(value));
-                    break;
-            }
+        } catch (Exception e) { // Decoding or parsing exceptions
+            return false;
         }
-        return true;
     }
 
     /**
