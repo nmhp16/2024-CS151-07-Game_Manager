@@ -17,17 +17,14 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
-//TODO : mport for font
-//TODO : import for label
 
 
 
-// TODO: Complete Snake game UI
 public class SnakeUI extends Application {
 
-    public static int block_size = 10;
-    int width = 30, height = 15;
-    int il = 5;
+        public static int block_size = 10;
+        int width = 30, height = 15;
+        int il = 5;
 
     long then = System.nanoTime();
 
@@ -84,7 +81,7 @@ public class SnakeUI extends Application {
 
         gameVBox.getChildren().addAll(f, score);
 
-        Scene scene = new Scene(gameVBox);
+                Scene scene = new Scene(gameVBox);
 
         
         scene.setOnKeyPressed(e -> { 
