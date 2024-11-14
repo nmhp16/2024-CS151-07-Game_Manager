@@ -1,14 +1,25 @@
 package com.game.ui;
 
+<<<<<<< HEAD
+import com.game.model.Snake.Field;
+import com.game.model.Snake.Snake;
+=======
 import com.game.model.SnakeGame.Field;
 import com.game.model.SnakeGame.Snake;
+>>>>>>> a56e1fdb6349a82193d0484eab8f675c55c7c694
 
+import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
+<<<<<<< HEAD
+
+
+=======
+>>>>>>> a56e1fdb6349a82193d0484eab8f675c55c7c694
 // TODO: Complete Snake game UI
 public class SnakeUI extends Application {
 
@@ -22,7 +33,18 @@ public class SnakeUI extends Application {
         gameVBox.setPadding(new Insets(10));
 
         Field f = new Field(width, height);
+<<<<<<< HEAD
+        f.addSnake(new Snake(il,f));
+
+        AnimationTimer timer = new AnimationTimer(){
+            public void handle(long now){
+            f.update();
+            }
+        };
+        timer.start();
+=======
         f.addSnake(new Snake(il, f));
+>>>>>>> a56e1fdb6349a82193d0484eab8f675c55c7c694
 
         gameVBox.getChildren().add(f);
 
@@ -32,6 +54,11 @@ public class SnakeUI extends Application {
         ps.setScene(scene);
 
         ps.setTitle("Snake Game");
+<<<<<<< HEAD
+
+        ps.show();
+=======
+>>>>>>> a56e1fdb6349a82193d0484eab8f675c55c7c694
 
         ps.show();
 
