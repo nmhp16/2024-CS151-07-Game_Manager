@@ -31,7 +31,7 @@ public class GameManagerController {
     private LoginManager loginManager = new LoginManager();
     private ToolbarUI toolbar;
     private HighScoresManager highScoresManager = new HighScoresManager();
-    private String username;
+    public static String username;
 
     public GameManagerController(Stage stage) {
         this.stage = stage;
@@ -49,7 +49,6 @@ public class GameManagerController {
      * Method to handle login event
      */
     public void handleLogin(String username, String password) {
-        this.username = username;
 
         if (loginManager.login(username, password)) {
             showMainMenu(stage);
@@ -98,12 +97,12 @@ public class GameManagerController {
         menuTitle.setFont(new Font("Georgia", 30));
 
         // Calculate font size based on both width and height
-        DoubleBinding fontSizeBinding = stage.widthProperty().multiply(0.05) // Adjust this factor as needed
+        DoubleBinding fontSizeBinding = stage.widthProperty().multiply(0.05)
                 .add(stage.heightProperty().multiply(0.1))
-                .divide(2); // Averaging or use .min() for minimum scaling factor
+                .divide(2);
 
         // Bind the style property to this combined font size
-        menuTitle.styleProperty().bind(fontSizeBinding.asString("-fx-font-size: %.0fpx;"));
+        menuTitle.styleProperty().bind(fontSizeBinding.asString("-fx-font-family: 'Georgia'; -fx-font-size: %.0fpx;"));
 
         // Dynamically scale padding with screen size
         menuTitle.paddingProperty().bind(

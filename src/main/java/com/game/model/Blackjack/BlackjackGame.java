@@ -134,8 +134,10 @@ public class BlackjackGame {
      * Method to load saveStateString to recover game state
      * 
      * @param saveStateString Saved game state string
+     * @return True if valid
+     *         False otherwise
      */
-    public void loadGameState(String saveStateString) {
+    public boolean loadGameState(String saveStateString) {
         // Decode Base64 encoded string
         String decodedState = new String(Base64.getDecoder().decode(saveStateString));
 
@@ -143,48 +145,204 @@ public class BlackjackGame {
 
         for (String entry : entries) {
             String[] keyValue = entry.split(":");
+
+            if (keyValue.length != 2) {
+                return false; // Invalid key format
+            }
+
             String key = keyValue[0];
             String value = keyValue[1];
 
             switch (key) {
                 case "turn":
+                    if (!isValidTurn(value)) {
+                        return false;
+                    }
                     turn = value;
                     break;
                 case "humanCards":
-                    humanPlayer.setHandFromString(value);
+                    if (!humanPlayer.setHandFromString(value)) {
+                        return false;
+                    }
                     break;
                 case "player1Cards":
-                    player1.setHandFromString(value);
+                    if (!player1.setHandFromString(value)) {
+                        return false;
+                    }
                     break;
                 case "player2Cards":
-                    player2.setHandFromString(value);
+                    if (!player2.setHandFromString(value)) {
+                        return false;
+                    }
                     break;
                 case "dealerCards":
-                    dealer.setHandFromString(value);
+                    if (!dealer.setHandFromString(value)) {
+                        return false;
+                    }
                     break;
                 case "humanBalance":
+                    if (!isValidBalance(value)) {
+                        return false;
+                    }
                     humanPlayer.setBalance(Integer.parseInt(value));
                     break;
                 case "player1Balance":
+                    if (!isValidBalance(value)) {
+                        return false;
+                    }
                     player1.setBalance(Integer.parseInt(value));
                     break;
                 case "player2Balance":
+                    if (!isValidBalance(value)) {
+                        return false;
+                    }
                     player2.setBalance(Integer.parseInt(value));
                     break;
                 case "dealerBalance":
+                    if (!isValidBalance(value)) {
+                        return false;
+                    }
                     dealer.setBalance(Integer.parseInt(value));
                     break;
                 case "humanBet":
+                    if (!isValidBet(value)) {
+                        return false;
+                    }
                     humanPlayer.setBet(Integer.parseInt(value));
                     break;
                 case "player1Bet":
+                    if (!isValidBet(value)) {
+                        return false;
+                    }
                     player1.setBet(Integer.parseInt(value));
                     break;
                 case "player2Bet":
+                    if (!isValidBet(value)) {
+                        return false;
+                    }
                     player2.setBet(Integer.parseInt(value));
                     break;
             }
         }
+        return true;
+    }
+
+    /**
+     * Helper method to check if saved state turn is valid
+     * 
+     * @param value Saved state string for turn
+     * @return True if valid
+     *         False otherwise
+     */
+    private boolean isValidTurn(String value) {
+        if (value.equalsIgnoreCase("You") || value.equalsIgnoreCase("Player 1")
+                || value.equalsIgnoreCase("Player 2")) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * Helper method to check if saved state balance valid
+     * 
+     * @param value Saved state string for balance
+     * @return True if valid
+     *         False otherwise
+     */
+    private boolean isValidBalance(String value) {
+        try {
+            int balance = Integer.parseInt(value);
+            return balance >= 0; // Non-negative balance
+        } catch (NumberFormatException e) {
+            return false;
+        }
+    }
+
+    /**
+     * Helper method to check if saved state bet is valid
+     * 
+     * @param value Saved state string for bet
+     * @return True if valid
+     *         False otherwise
+     */
+    private boolean isValidBet(String value) {
+        try {
+            int bet = Integer.parseInt(value);
+            return bet >= 0;
+        } catch (NumberFormatException e) {
+            return false;
+        }
+    }
+
+    /**
+     * Method to calculate player result
+     * 
+     * @param player Player to be calculated
+     * @return String message result
+     */
+    public String calculateResults(Player player) {
+        int dealerValue = dealer.calculateHandValue();
+        int playerValue = player.calculateHandValue();
+        int bet = player.getBet();
+        String message = "";
+
+        boolean playerBlackjack = playerValue == 21 && player.getHand().size() == 2;
+        boolean dealerBlackjack = dealerValue == 21 && dealer.getHand().size() == 2;
+
+        // Case 1: Player and Dealer both > 21
+        if (dealerValue > 21 && playerValue > 21) {
+            // Tie, lose and gain nothing
+            player.adjustBalance(-bet);
+            message = player.getName() + " Lose!";
+        }
+
+        // Case 2: Player <= 21, Dealer > 21
+        else if (dealerValue > 21 && playerValue <= 21) {
+            // Win, Player gain bet
+            player.adjustBalance(bet);
+            message = player.getName() + " Win!";
+        }
+
+        // Case 3: Player > 21, Dealer <= 21
+        else if (dealerValue <= 21 && playerValue > 21) {
+            // Bust, Player lost bet
+            player.adjustBalance(-bet);
+            message = player.getName() + " Lost!";
+        }
+
+        // Case 4: Dealer <= 21 && Player <= 21
+        else if (dealerValue <= 21 && playerValue <= 21) {
+            // Case 5: Player blackjack
+            if (playerBlackjack && !dealerBlackjack) {
+                player.adjustBalance(bet); // Player win
+                message = player.getName() + " Win!";
+            }
+            // Case 6: Dealer blackjack
+            else if (dealerBlackjack && !playerBlackjack) {
+                player.adjustBalance(-bet);
+                message = player.getName() + " Lose!";
+            }
+            // Case 7: Player value > Dealer value
+            else if (playerValue > dealerValue) {
+                // Win, Player gain bet
+                player.adjustBalance(bet);
+                message = player.getName() + " Win!";
+            }
+            // Case 8: PLayer value < Dealer value
+            else if (playerValue < dealerValue) {
+                // Bust, Player lost bet
+                player.adjustBalance(-bet);
+                message = player.getName() + " Lost!";
+            }
+            // Case 9: Player value = Dealer value
+            else {
+                // Tie, Gain nothing
+                player.adjustBalance(0);
+                message = player.getName() + " Tie!";
+            }
+        }
+        return message;
     }
 
     // Getters

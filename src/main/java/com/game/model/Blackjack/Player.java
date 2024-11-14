@@ -87,11 +87,13 @@ public abstract class Player {
     }
 
     /**
-     * Method to set play hand using handString
+     * Method to set play hand using handString from saved state
      * 
      * @param handString String of card in hand
+     * @return True if valid
+     *         False otherwise
      */
-    public void setHandFromString(String handString) {
+    public boolean setHandFromString(String handString) {
         hand.clear(); // Clear current hand;
 
         String[] cardStrings = handString.split(","); // Split by comma to get each card
@@ -115,9 +117,10 @@ public abstract class Player {
                 Card card = new Card(suit, rank, value);
                 hand.add(card);
             } else {
-                System.out.println("Invalid card string: " + cardString);
+                return false;
             }
         }
+        return true;
     }
 
     /**
