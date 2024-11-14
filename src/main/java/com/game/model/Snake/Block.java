@@ -1,4 +1,4 @@
-package com.game.model.SnakeGame;
+package com.game.model.Snake;
 import javafx.scene.shape.Rectangle;
 import com.game.ui.SnakeUI; // Ensure SnakeUI is imported
 

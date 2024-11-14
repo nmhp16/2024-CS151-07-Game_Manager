@@ -1,7 +1,7 @@
 package com.game.ui;
 
-import com.game.model.SnakeGame.Field;
-import com.model.SnakeGame .Snake;
+import com.game.model.Snake.Field;
+import com.game.model.Snake.Snake;
 
 import javafx.application.Application;
 import javafx.geometry.Insets;
