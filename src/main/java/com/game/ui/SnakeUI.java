@@ -1,7 +1,7 @@
 package com.game.ui;
 
 import com.game.model.SnakeGame.Field;
-import com.model.SnakeGame .Snake;
+import com.game.model.SnakeGame.Snake;
 
 import javafx.application.Application;
 import javafx.geometry.Insets;
@@ -9,13 +9,12 @@ import javafx.scene.Scene;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
-
 // TODO: Complete Snake game UI
 public class SnakeUI extends Application {
 
     public static int block_size = 10;
-    int width = 30, height = 15; 
-    int il = 5; 
+    int width = 30, height = 15;
+    int il = 5;
 
     @Override
     public void start(Stage ps) {
@@ -23,20 +22,18 @@ public class SnakeUI extends Application {
         gameVBox.setPadding(new Insets(10));
 
         Field f = new Field(width, height);
-        f.addSnake(new Snake(il,f));
-
+        f.addSnake(new Snake(il, f));
 
         gameVBox.getChildren().add(f);
 
-            Scene scene = new Scene(gameVBox);
+        Scene scene = new Scene(gameVBox);
 
-            ps.setResizable(false);
-            ps.setScene(scene);
+        ps.setResizable(false);
+        ps.setScene(scene);
 
-            ps.setTitle("Snake Game");
+        ps.setTitle("Snake Game");
 
-            ps.show();
-
+        ps.show();
 
     }
 
