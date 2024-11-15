@@ -16,6 +16,7 @@ public class Food extends Rectangle{
         return posY;
     }
 
+    
     public Food (int x, int y){
         super (SnakeUI.block_size, SnakeUI.block_size);
         posX = x;

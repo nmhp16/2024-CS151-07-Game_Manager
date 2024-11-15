@@ -34,6 +34,8 @@ public class Field extends Pane {
     }
 
 
+    
+
 
     public void addSnake(Snake s) {
         snake = s;
@@ -59,6 +61,8 @@ public class Field extends Pane {
 
 }
 
+
+    
 
 
     public boolean isDead() { 
