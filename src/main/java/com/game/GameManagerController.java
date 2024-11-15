@@ -1,15 +1,14 @@
 package com.game;
 
-import com.game.ui.BlackjackUI;
-import com.game.ui.SnakeUI;
-import com.game.ui.ToolbarUI;
-
 import java.util.ArrayList;
 import java.util.List;
 
 import com.game.model.HighScore;
 import com.game.service.HighScoresManager;
 import com.game.service.LoginManager;
+import com.game.ui.BlackjackUI;
+import com.game.ui.SnakeUI;
+import com.game.ui.ToolbarUI;
 
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.DoubleBinding;
@@ -205,8 +204,47 @@ public class GameManagerController {
 
         // Event handler fpr "Play Snake" button
         playSnakeButton.setOnAction(event -> {
-            SnakeUI snakeGame = new SnakeUI();
-            snakeGame.start(stage);
+            VBox optionsBox = new VBox(20);
+            Button playsingle = new Button("Play Single Player");
+            playsingle.setFont(new Font("Georgia", 20));
+            playsingle.setPrefWidth(300);
+
+            Button playmulti = new Button("Play Multiplayer");
+            playmulti.setFont(new Font("Georgia", 20));
+            playmulti.setPrefWidth(300);
+
+
+            // Set button size dynamically based on stage width
+            playsingle.prefWidthProperty().bind(stage.widthProperty().multiply(0.3)); // 30% of the stage width
+            playmulti.prefWidthProperty().bind(stage.widthProperty().multiply(0.3)); // 30% of the stage width
+
+            // Bind button height dynamically based on stage height
+            playsingle.prefHeightProperty().bind(stage.heightProperty().multiply(0.1)); // 10% of the stage height
+            playmulti.prefHeightProperty().bind(stage.heightProperty().multiply(0.1)); // 10% of the stage height
+
+            optionsBox.getChildren().addAll(playsingle, playmulti);
+
+            AnchorPane optionPane = new AnchorPane();
+
+            optionPane.getChildren().addAll(toolbar, optionsBox);
+            AnchorPane.setTopAnchor(toolbar, 0.0); // Top margin
+            AnchorPane.setLeftAnchor(toolbar, 0.0); // Left margin
+            AnchorPane.setRightAnchor(toolbar, 0.0); // Right margin
+            
+            
+            AnchorPane.setTopAnchor(optionsBox, 20.0); // Top margin
+            AnchorPane.setLeftAnchor(optionsBox, 20.0); // Left margin
+            AnchorPane.setRightAnchor(optionsBox, 20.0); // Right margin
+            AnchorPane.setBottomAnchor(optionsBox, 20.0); // Bottom margin
+            
+            optionsBox.setAlignment(Pos.CENTER);
+            stage.setScene(new Scene(optionPane, 700, 400));
+
+            playsingle.setOnAction(e -> {
+                SnakeUI snakeGame = new SnakeUI();
+                snakeGame.start(stage);
+            });
+            
         });
     }
 
@@ -234,3 +272,4 @@ public class GameManagerController {
         gameManager.start(stage);
     }
 }
+

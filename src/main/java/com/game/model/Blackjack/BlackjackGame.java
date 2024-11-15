@@ -326,7 +326,7 @@ public class BlackjackGame {
             // Case 6: Dealer blackjack
             else if (dealerBlackjack && !playerBlackjack) {
                 player.adjustBalance(-bet);
-                message = player.getName() + " Lose!";
+                message = player.getName() + " Lost!";
             }
             // Case 7: Player value > Dealer value
             else if (playerValue > dealerValue) {
