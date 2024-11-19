@@ -313,7 +313,7 @@ public class BlackjackGame {
         else if (dealerValue <= 21 && playerValue > 21) {
             // Bust, Player lost bet
             player.adjustBalance(-bet);
-            message = player.getName() + " Lost!";
+            message = player.getName() + " Lose!";
         }
 
         // Case 4: Dealer <= 21 && Player <= 21
@@ -326,7 +326,7 @@ public class BlackjackGame {
             // Case 6: Dealer blackjack
             else if (dealerBlackjack && !playerBlackjack) {
                 player.adjustBalance(-bet);
-                message = player.getName() + " Lost!";
+                message = player.getName() + " Lose!";
             }
             // Case 7: Player value > Dealer value
             else if (playerValue > dealerValue) {
@@ -338,7 +338,7 @@ public class BlackjackGame {
             else if (playerValue < dealerValue) {
                 // Bust, Player lost bet
                 player.adjustBalance(-bet);
-                message = player.getName() + " Lost!";
+                message = player.getName() + " Lose!";
             }
             // Case 9: Player value = Dealer value
             else {

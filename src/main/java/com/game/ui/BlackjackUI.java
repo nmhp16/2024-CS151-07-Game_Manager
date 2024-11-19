@@ -60,6 +60,7 @@ public class BlackjackUI extends Application {
         gameManagerController = new GameManagerController(primaryStage);
         game = new BlackjackGame();
         toolbar = new ToolbarUI(gameManagerController, primaryStage);
+        GameManagerController.isGameRunning = true;
         sessionFinished = false;
 
         // Set status label
@@ -185,6 +186,14 @@ public class BlackjackUI extends Application {
      * @param stage Current primary stage
      */
     private void updateUI(Stage stage) {
+        // Stop updateUI if game is not running
+        if (GameManagerController.isGameRunning == false) {
+            HighScore highScore = new HighScore(username, game.getHumanPlayer().getBalance(),
+                    "Blackjack");
+
+            highScoresManager.addHighScores(username, highScore);
+            return;
+        }
 
         // Create the turn label
         Label turnLabel = createTurnLabel();
