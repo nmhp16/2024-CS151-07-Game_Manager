@@ -31,6 +31,7 @@ public class GameManagerController {
     private ToolbarUI toolbar;
     private HighScoresManager highScoresManager = new HighScoresManager();
     public static String username;
+    public static boolean isGameRunning = true;
 
     public GameManagerController(Stage stage) {
         this.stage = stage;
@@ -61,10 +62,15 @@ public class GameManagerController {
      */
     public void handleCreateAccount(String username, String password) {
 
-        if (loginManager.createAccount(username, password)) {
-            showAlert("Account Created", "Account has been created successfully.");
+        if (username.isEmpty() || password.isEmpty()) {
+            showAlert("Account Creation Failed", "Username or password cannot be empty.");
+            return;
         } else {
-            showAlert("Account Creation Failed", "Username already exists.");
+            if (loginManager.createAccount(username, password)) {
+                showAlert("Account Created", "Account has been created successfully.");
+            } else {
+                showAlert("Account Creation Failed", "Username already exists.");
+            }
         }
     }
 
@@ -213,7 +219,6 @@ public class GameManagerController {
             playmulti.setFont(new Font("Georgia", 20));
             playmulti.setPrefWidth(300);
 
-
             // Set button size dynamically based on stage width
             playsingle.prefWidthProperty().bind(stage.widthProperty().multiply(0.3)); // 30% of the stage width
             playmulti.prefWidthProperty().bind(stage.widthProperty().multiply(0.3)); // 30% of the stage width
@@ -230,13 +235,12 @@ public class GameManagerController {
             AnchorPane.setTopAnchor(toolbar, 0.0); // Top margin
             AnchorPane.setLeftAnchor(toolbar, 0.0); // Left margin
             AnchorPane.setRightAnchor(toolbar, 0.0); // Right margin
-            
-            
+
             AnchorPane.setTopAnchor(optionsBox, 20.0); // Top margin
             AnchorPane.setLeftAnchor(optionsBox, 20.0); // Left margin
             AnchorPane.setRightAnchor(optionsBox, 20.0); // Right margin
             AnchorPane.setBottomAnchor(optionsBox, 20.0); // Bottom margin
-            
+
             optionsBox.setAlignment(Pos.CENTER);
             stage.setScene(new Scene(optionPane, 700, 400));
 
@@ -244,7 +248,7 @@ public class GameManagerController {
                 SnakeUI snakeGame = new SnakeUI(username);
                 snakeGame.start(stage);
             });
-            
+
         });
     }
 
@@ -272,4 +276,3 @@ public class GameManagerController {
         gameManager.start(stage);
     }
 }
-
