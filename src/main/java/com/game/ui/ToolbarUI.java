@@ -15,7 +15,10 @@ public class ToolbarUI extends ToolBar {
 
         // Create "Sign Out" button
         signOutButton = new Button("Sign Out");
-        signOutButton.setOnAction(event -> controller.showLoginPage(stage));
+        signOutButton.setOnAction(event -> {
+            GameManagerController.isGameRunning = false;
+            controller.showLoginPage(stage);
+        });
 
         // Add "Sign Out" button to toolbar
         signOutButton.setFont(new Font("Georgia", 20));
@@ -24,7 +27,10 @@ public class ToolbarUI extends ToolBar {
 
         // Create "Main Menu" button
         mainMenuButton = new Button("Main menu");
-        mainMenuButton.setOnAction(event -> controller.showMainMenu(stage));
+        mainMenuButton.setOnAction(event -> {
+            GameManagerController.isGameRunning = false;
+            controller.showMainMenu(stage);
+        });
 
         // Add "Main Menu" button to toolbar
         mainMenuButton.setFont(new Font("Georgia", 20));
