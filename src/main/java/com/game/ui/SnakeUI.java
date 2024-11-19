@@ -1,8 +1,10 @@
 package com.game.ui;
 
+import com.game.model.HighScore;
 import com.game.model.Snake.Block;
 import com.game.model.Snake.Field;
 import com.game.model.Snake.Snake;
+import com.game.service.HighScoresManager;
 
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
@@ -11,15 +13,12 @@ import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
-import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-
-
 
 
 public class SnakeUI extends Application {
@@ -37,8 +36,18 @@ public class SnakeUI extends Application {
     Field f;
 
     public Stage pauseStage;
-
+    private String username;
     boolean paused = false; 
+
+    private HighScoresManager highScoresManager;
+
+
+public SnakeUI(String username) {
+
+        this.username = username; // Initialize the username
+        this.highScoresManager = new HighScoresManager(); // Initialize highScoresManager
+    }
+
 
     @Override
     public void start(Stage ps) {
@@ -68,6 +77,10 @@ public class SnakeUI extends Application {
 
                         if (f.isDead()){
                                 stop();
+
+                                int currentScore = f.getScore();
+                                updateHighScore(username, currentScore);
+
                                 Alert al = new Alert(AlertType.INFORMATION);
                                 al.setHeaderText("YOUR SNAKE DIED");
                                 al.setContentText("Score reached : "+f.score);
@@ -186,8 +199,8 @@ public class SnakeUI extends Application {
 
                 pauseLayout.setAlignment(Pos.CENTER);
                 
-                Button speedButton = new Button("Speed: 2x");
-                pauseLayout.getChildren().add(speedButton);
+                int currentScore = f.getScore();
+                updateHighScore(username, currentScore);
                 
                 Scene pauseScene = new Scene(pauseLayout);
                 pauseScene.setOnKeyPressed(e -> {
@@ -202,7 +215,13 @@ public class SnakeUI extends Application {
                 pauseStage.setScene(pauseScene);
                 
             }
-    
+
+        private void updateHighScore(String username, int score) {
+
+                String gameName = "Snake";
+                HighScore highScore = new HighScore(username, score, gameName);
+                highScoresManager.addHighScores(username, highScore);
+        }
 
 }
 

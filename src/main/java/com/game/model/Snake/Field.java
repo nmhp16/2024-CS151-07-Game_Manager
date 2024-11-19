@@ -34,6 +34,10 @@ public class Field extends Pane {
     }
 
 
+    public int getScore() {
+        return score;
+    }
+    
     
 
 
@@ -57,7 +61,6 @@ public class Field extends Pane {
         addNewBlock();
 
     }
-
 
 }
 
@@ -121,4 +124,7 @@ public class Field extends Pane {
     public int getH() {
         return h;
     }
+
+
+
 }
