@@ -241,7 +241,7 @@ public class GameManagerController {
             stage.setScene(new Scene(optionPane, 700, 400));
 
             playsingle.setOnAction(e -> {
-                SnakeUI snakeGame = new SnakeUI();
+                SnakeUI snakeGame = new SnakeUI(username);
                 snakeGame.start(stage);
             });
             
