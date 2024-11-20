@@ -6,10 +6,9 @@ import javafx.scene.paint.Color;
 
 public class Snake {
 
-    ArrayList<Block> blocks = new ArrayList<Block>();
-
-    Block head;
-    Block tail;
+    public ArrayList<Block> blocks = new ArrayList<Block>();
+    public Block head;
+    public Block tail;
 
     public Snake(int il, Field f) {
         int ipx = f.getW() / 2;
@@ -22,21 +21,20 @@ public class Snake {
         tail = head;
 
         for (int i = 1; i < il; i++) {
-            Block b = new Block(ipx + i, ipy, tail, f );
+            Block b = new Block(ipx + i, ipy, tail, f);
             blocks.add(b);
             tail = b;
 
         }
     }
 
-    public void setDirection(int d){
+    public void setDirection(int d) {
         head.direction = d;
 
     }
-    public int getDirection(){
+
+    public int getDirection() {
         return head.direction;
     }
 
-    
-
-} 
+}
