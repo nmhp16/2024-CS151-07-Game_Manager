@@ -76,18 +76,19 @@ public SnakeUI(String username) {
                         }
 
                         if (f.isDead()){
-                                stop();
+                                if (f.isDead()) {
+                                        stop();
+                                    
+                                        int currentScore = f.getScore();
+                                        updateHighScore(username, currentScore);
+                                    
+                                        displayGameOverScreen(currentScore, ps); // Replace Alert with a dedicated Game Over Screen
+                                    }
 
-                                int currentScore = f.getScore();
-                                updateHighScore(username, currentScore);
 
-                                Alert al = new Alert(AlertType.INFORMATION);
-                                al.setHeaderText("YOUR SNAKE DIED");
-                                al.setContentText("Score reached : "+f.score);
-                                al.show();
 
                         
-
+                        Alert al = new Alert(AlertType.INFORMATION);
                         al.setOnHidden(e->{
                                 gameVBox.getChildren().clear();
                                 f = new Field(width, height);
@@ -152,8 +153,39 @@ public SnakeUI(String username) {
         }
 
 
+
+
        
 }
+
+
+private void displayGameOverScreen(int finalScore, Stage ps) {
+        VBox gameOverLayout = new VBox(10);
+        gameOverLayout.setAlignment(Pos.CENTER);
+        gameOverLayout.setPadding(new Insets(20));
+    
+        Label gameOverLabel = new Label("Game Over");
+        gameOverLabel.setFont(Font.font("tahoma", 32));
+    
+        Label scoreLabel = new Label("Your Final Score: " + finalScore);
+        scoreLabel.setFont(Font.font("tahoma", 20));
+    
+        Label restartInstruction = new Label("Press ENTER to restart");
+        restartInstruction.setFont(Font.font("tahoma", 16));
+    
+        gameOverLayout.getChildren().addAll(gameOverLabel, scoreLabel, restartInstruction);
+    
+        Scene gameOverScene = new Scene(gameOverLayout, block_size * width, block_size * height);
+        gameOverScene.setOnKeyPressed(e -> {
+            if (e.getCode() == KeyCode.ENTER) {
+                restartGame(ps); // Restart the game when ENTER is pressed
+            }
+        });
+    
+        ps.setScene(gameOverScene);
+        ps.show();
+    }
+    
 
         public void setDirection(Snake s, int d){ 
         if(!changed){
@@ -222,6 +254,14 @@ public SnakeUI(String username) {
                 HighScore highScore = new HighScore(username, score, gameName);
                 highScoresManager.addHighScores(username, highScore);
         }
+
+        private void restartGame(Stage ps) {
+                f = new Field(width, height);
+                f.addSnake(new Snake(il, f));
+            
+                start(ps); // Restart the game using the `start` method
+            }
+            
 
 }
 

@@ -215,19 +215,14 @@ public class GameManagerController {
             playsingle.setFont(new Font("Georgia", 20));
             playsingle.setPrefWidth(300);
 
-            Button playmulti = new Button("Play Multiplayer");
-            playmulti.setFont(new Font("Georgia", 20));
-            playmulti.setPrefWidth(300);
 
             // Set button size dynamically based on stage width
             playsingle.prefWidthProperty().bind(stage.widthProperty().multiply(0.3)); // 30% of the stage width
-            playmulti.prefWidthProperty().bind(stage.widthProperty().multiply(0.3)); // 30% of the stage width
 
             // Bind button height dynamically based on stage height
             playsingle.prefHeightProperty().bind(stage.heightProperty().multiply(0.1)); // 10% of the stage height
-            playmulti.prefHeightProperty().bind(stage.heightProperty().multiply(0.1)); // 10% of the stage height
 
-            optionsBox.getChildren().addAll(playsingle, playmulti);
+            optionsBox.getChildren().addAll(playsingle);
 
             AnchorPane optionPane = new AnchorPane();
 

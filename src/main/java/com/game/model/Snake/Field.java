@@ -3,6 +3,8 @@ import java.util.ArrayList;
 
 import com.game.ui.SnakeUI;
 
+import javafx.scene.canvas.Canvas;
+import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.Border;
@@ -20,6 +22,8 @@ public class Field extends Pane {
     ArrayList<Block> blocks = new ArrayList<>();
     Food f; 
 
+    private Canvas gridCanvas; // Declare gridCanvas here
+
     public int score = 0; 
     public Snake snake;
 
@@ -29,8 +33,17 @@ public class Field extends Pane {
 
         setMinSize(w * SnakeUI.block_size, h * SnakeUI.block_size);
         setBackground(new Background(new BackgroundFill(Color.GREEN, null, null)));
-        setBorder(new Border(new BorderStroke(Color.BLUE, BorderStrokeStyle.SOLID, null, new BorderWidths(1))));
+        setBorder(new Border(new BorderStroke(Color.BLUE, BorderStrokeStyle.SOLID, null, new BorderWidths(3))));
+
+        gridCanvas = new Canvas(w * SnakeUI.block_size, h * SnakeUI.block_size);  // Change #2: Create Canvas
+        getChildren().add(gridCanvas);
+
+        // Call the method to draw the grid
+        drawGrid();  // Change #3: Call drawGrid()
+
         addFood();
+
+
     }
 
 
@@ -38,7 +51,21 @@ public class Field extends Pane {
         return score;
     }
     
-    
+    private void drawGrid() {  // Change #4: Add drawGrid() method
+        // Get the GraphicsContext from the Canvas
+        GraphicsContext gc = gridCanvas.getGraphicsContext2D();
+
+        // Set the grid line color (you can change the color here)
+        gc.setStroke(Color.BLACK);
+        gc.setLineWidth(1);
+
+        // Draw the grid lines
+        for (int i = 0; i < w; i++) {
+            for (int j = 0; j < h; j++) {
+                gc.strokeRect(i * SnakeUI.block_size, j * SnakeUI.block_size, SnakeUI.block_size, SnakeUI.block_size);
+            }
+        }
+    }
 
 
     public void addSnake(Snake s) {
