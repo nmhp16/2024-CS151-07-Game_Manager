@@ -1,26 +1,21 @@
 package com.game.model.Snake;
+
 import com.game.ui.SnakeUI;
 
 import javafx.scene.shape.Rectangle;
 
-
-public class Block extends Rectangle{
-    int posX, posY, oldPosX, oldPosY;
-
+public class Block extends Rectangle {
+    public int posX, posY, oldPosX, oldPosY;
     public static final int UP = 0, RIGHT = 1, DOWN = 2, LEFT = 3;
+    public Block previous;
+    public int direction = LEFT;
+    private int maxX, maxY;
 
-    Block previous;
-
-    
-    int direction = LEFT;
-    int maxX, maxY;
-
-    
-
-    public Block(int x, int y, Block p , Field f){
+    // Constructor
+    public Block(int x, int y, Block p, Field f) {
         super(SnakeUI.block_size, SnakeUI.block_size);
         posX = x;
-        posY = y; 
+        posY = y;
 
         setTranslateX(posX * SnakeUI.block_size);
         setTranslateY(posY * SnakeUI.block_size);
@@ -31,27 +26,25 @@ public class Block extends Rectangle{
 
     }
 
-
-    public void update(){
+    public void update() {
         oldPosX = posX;
         oldPosY = posY;
-        if (previous == null){
-            switch (direction){
+        if (previous == null) {
+            switch (direction) {
                 case UP:
                     moveUp();
                     break;
-                case RIGHT: 
+                case RIGHT:
                     moveRight();
                     break;
-                case DOWN: 
+                case DOWN:
                     moveDown();
                     break;
-                case LEFT: 
+                case LEFT:
                     moveLeft();
                     break;
             }
-        }
-        else { 
+        } else {
             posX = previous.oldPosX;
             posY = previous.oldPosY;
 
@@ -59,38 +52,40 @@ public class Block extends Rectangle{
         updatePosition();
     }
 
-    public void moveUp(){
+    public void moveUp() {
         posY--;
-        if(posY < 0) { 
+        if (posY < 0) {
             posY = 0;
 
         }
     }
-    public void moveDown(){
+
+    public void moveDown() {
         posY++;
-        if ( posY >= maxY) { 
+        if (posY >= maxY) {
             posY = maxY - 1;
         }
     }
-    public void moveLeft(){
+
+    public void moveLeft() {
         posX--;
-        if (posX < 0){
+        if (posX < 0) {
             posX = 0;
 
         }
     }
-    public void moveRight(){
+
+    public void moveRight() {
         posX++;
-        if (posX >= maxX){
+        if (posX >= maxX) {
             posX = maxX - 1;
         }
     }
 
-    public void updatePosition(){
+    public void updatePosition() {
         setTranslateX(posX * SnakeUI.block_size);
         setTranslateY(posY * SnakeUI.block_size);
 
     }
 
-    
 }

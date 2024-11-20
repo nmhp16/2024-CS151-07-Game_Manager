@@ -31,7 +31,6 @@ public class GameManagerController {
     private ToolbarUI toolbar;
     private HighScoresManager highScoresManager = new HighScoresManager();
     public static String username;
-    public static boolean isGameRunning = true;
 
     public GameManagerController(Stage stage) {
         this.stage = stage;
@@ -80,6 +79,8 @@ public class GameManagerController {
      * @param stage Primary stage
      */
     public void showMainMenu(Stage stage) {
+        highScoresManager.loadHighScores();
+
         stage.setTitle("Game Manager");
 
         // Main menu - AnchorPane for resizing
@@ -211,18 +212,17 @@ public class GameManagerController {
         // Event handler fpr "Play Snake" button
         playSnakeButton.setOnAction(event -> {
             VBox optionsBox = new VBox(20);
-            Button playsingle = new Button("Play Single Player");
-            playsingle.setFont(new Font("Georgia", 20));
-            playsingle.setPrefWidth(300);
-
+            Button playClassic = new Button("Play Classic Mode");
+            playClassic.setFont(new Font("Georgia", 20));
+            playClassic.setPrefWidth(300);
 
             // Set button size dynamically based on stage width
-            playsingle.prefWidthProperty().bind(stage.widthProperty().multiply(0.3)); // 30% of the stage width
+            playClassic.prefWidthProperty().bind(stage.widthProperty().multiply(0.3)); // 30% of the stage width
 
             // Bind button height dynamically based on stage height
-            playsingle.prefHeightProperty().bind(stage.heightProperty().multiply(0.1)); // 10% of the stage height
+            playClassic.prefHeightProperty().bind(stage.heightProperty().multiply(0.1)); // 10% of the stage height
 
-            optionsBox.getChildren().addAll(playsingle);
+            optionsBox.getChildren().addAll(playClassic);
 
             AnchorPane optionPane = new AnchorPane();
 
@@ -239,7 +239,7 @@ public class GameManagerController {
             optionsBox.setAlignment(Pos.CENTER);
             stage.setScene(new Scene(optionPane, 700, 400));
 
-            playsingle.setOnAction(e -> {
+            playClassic.setOnAction(e -> {
                 SnakeUI snakeGame = new SnakeUI(username);
                 snakeGame.start(stage);
             });
