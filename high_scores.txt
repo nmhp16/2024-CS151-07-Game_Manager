@@ -1,4 +1,5 @@
-default,1000,Snake
-default,20,Snake
+default,620,Snake
+default,440,Snake
 default,1000,Blackjack
-default,80,Snake
+default,620,Snake
+default,1000,Snake

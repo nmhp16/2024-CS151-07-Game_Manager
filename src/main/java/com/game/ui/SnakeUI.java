@@ -23,22 +23,23 @@ import javafx.stage.Stage;
 
 public class SnakeUI extends Application {
 
-        public static int block_size = 15;
-        private int width = 70, height = 30;
+        public static int block_size = 25;
+        public static boolean isSnakeRunning = false;
+        private int width = 45, height = 25;
         private int il = 2;
         private long then = System.nanoTime();
         private boolean changed = false;
         private int nextUpdate;
         private boolean hasNext = false;
         private Field f;
-        public Stage pauseStage;
+        private Stage pauseStage;
         private String username;
         private boolean paused = false;
         private HighScoresManager highScoresManager;
         private ToolbarUI toolbar;
         private GameManagerController gameManagerController;
-        public static boolean isSnakeRunning = false;
 
+        // Overloaded constructor
         public SnakeUI(String username) {
                 this.username = username; // Initialize the username
                 this.highScoresManager = new HighScoresManager(); // Initialize highScoresManager
@@ -81,10 +82,10 @@ public class SnakeUI extends Application {
                                 if (now - then > 100000000 / 1.5) {
                                         f.update();
                                         then = now;
-                                        score.setText("Score: " + f.score);
+                                        score.setText("Score: " + f.getScore());
                                         changed = false;
                                         if (hasNext) {
-                                                setDirection(f.snake, nextUpdate);
+                                                setDirection(f.getSnake(), nextUpdate);
                                                 hasNext = false;
                                         }
 
@@ -143,17 +144,17 @@ public class SnakeUI extends Application {
                                 initPausePopup(ps);
                                 togglePause(timer);
                         }
-                        if (e.getCode().equals(KeyCode.UP) && f.snake.getDirection() != Block.DOWN) {
-                                f.snake.setDirection(Block.UP);
+                        if (e.getCode().equals(KeyCode.UP) && f.getSnake().getDirection() != Block.DOWN) {
+                                f.getSnake().setDirection(Block.UP);
                         }
-                        if (e.getCode().equals(KeyCode.DOWN) && f.snake.getDirection() != Block.UP) {
-                                f.snake.setDirection(Block.DOWN);
+                        if (e.getCode().equals(KeyCode.DOWN) && f.getSnake().getDirection() != Block.UP) {
+                                f.getSnake().setDirection(Block.DOWN);
                         }
-                        if (e.getCode().equals(KeyCode.RIGHT) && f.snake.getDirection() != Block.LEFT) {
-                                f.snake.setDirection(Block.RIGHT);
+                        if (e.getCode().equals(KeyCode.RIGHT) && f.getSnake().getDirection() != Block.LEFT) {
+                                f.getSnake().setDirection(Block.RIGHT);
                         }
-                        if (e.getCode().equals(KeyCode.LEFT) && f.snake.getDirection() != Block.RIGHT) {
-                                f.snake.setDirection(Block.LEFT);
+                        if (e.getCode().equals(KeyCode.LEFT) && f.getSnake().getDirection() != Block.RIGHT) {
+                                f.getSnake().setDirection(Block.LEFT);
                         }
 
                 });
