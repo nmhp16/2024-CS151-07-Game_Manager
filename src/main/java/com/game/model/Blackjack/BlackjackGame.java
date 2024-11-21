@@ -10,11 +10,7 @@ public class BlackjackGame {
     private Player player2;
     private String turn;
 
-    /**
-     * Overloaded Constructor
-     * 
-     * @param username Username from JavaFX
-     */
+    // Constructor
     public BlackjackGame() {
         this.deck = new Deck();
         this.humanPlayer = new HumanPlayer("You");
@@ -350,23 +346,47 @@ public class BlackjackGame {
         return message;
     }
 
-    // Getters
+    /**
+     * Get the human player.
+     * 
+     * @return The human player.
+     */
     public Player getHumanPlayer() {
         return humanPlayer;
     }
 
+    /**
+     * Get the dealer.
+     * 
+     * @return The dealer player.
+     */
     public Player getDealer() {
         return dealer;
     }
 
+    /**
+     * Get the first bot player.
+     * 
+     * @return The first bot player.
+     */
     public Player getPlayer1() {
         return player1;
     }
 
+    /**
+     * Get the second bot player.
+     * 
+     * @return The second bot player.
+     */
     public Player getPlayer2() {
         return player2;
     }
 
+    /**
+     * Get the deck used in the current game.
+     * 
+     * @return The current deck.
+     */
     public Deck getDeck() {
         return deck;
     }
