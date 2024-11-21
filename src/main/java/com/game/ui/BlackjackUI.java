@@ -45,6 +45,7 @@ public class BlackjackUI extends Application {
     private Button saveButton = new Button("Save State");
     private Button stopButton = new Button("Stop");
     private Button newRoundButton = new Button("New Round");
+    public static boolean isBlackjackRunning = false;
 
     /**
      * Overloaded Constructor
@@ -60,7 +61,6 @@ public class BlackjackUI extends Application {
         gameManagerController = new GameManagerController(primaryStage);
         game = new BlackjackGame();
         toolbar = new ToolbarUI(gameManagerController, primaryStage);
-        GameManagerController.isGameRunning = true;
         sessionFinished = false;
 
         // Set status label
@@ -122,6 +122,7 @@ public class BlackjackUI extends Application {
      */
     private void startNewGame(Stage stage) {
         game.startNewRound();
+        isBlackjackRunning = true;
         updateUI(stage);
     }
 
@@ -187,11 +188,7 @@ public class BlackjackUI extends Application {
      */
     private void updateUI(Stage stage) {
         // Stop updateUI if game is not running
-        if (GameManagerController.isGameRunning == false) {
-            HighScore highScore = new HighScore(username, game.getHumanPlayer().getBalance(),
-                    "Blackjack");
-
-            highScoresManager.addHighScores(username, highScore);
+        if (isBlackjackRunning == false) {
             return;
         }
 
@@ -535,6 +532,7 @@ public class BlackjackUI extends Application {
 
         // Event handler for stop
         stopButton.setOnAction(event -> {
+            gameManagerController.showAlert("Game Finished!", "Thanks for playing!");
             HighScore highScore = new HighScore(username, game.getHumanPlayer().getBalance(),
                     "Blackjack");
 

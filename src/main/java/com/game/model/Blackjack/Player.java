@@ -147,29 +147,54 @@ public abstract class Player {
         }
     }
 
-    // Getters
+    /**
+     * Get the name of the player
+     * 
+     * @return String player name
+     */
     public String getName() {
         return name;
     }
 
+    /**
+     * Get current player hand
+     * 
+     * @return List of Cards in current player hand
+     */
     public List<Card> getHand() {
         return hand;
     }
 
+    /**
+     * Get current player balance
+     * 
+     * @return Player balance
+     */
     public int getBalance() {
         return balance;
     }
 
+    /**
+     * Get current bet amount
+     * 
+     * @return Bet amount
+     */
     public int getBet() {
         return bet;
     }
 
-    // Setters
+    /**
+     * Set player balance
+     * 
+     * @param balance New balance amount
+     */
     public void setBalance(int balance) {
         this.balance = balance;
     }
 
-    // Method to reset hand
+    /**
+     * Method to reset the player's hand by clearing all cards from it.
+     */
     public void resetHand() {
         hand.clear();
     }
