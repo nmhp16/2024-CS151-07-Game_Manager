@@ -27,11 +27,11 @@ public class SnakeUI extends Application {
         int width = 70, height = 30;
         int il = 2;
 
-    long then = System.nanoTime();
+    private long then = System.nanoTime();
 
-    boolean changed = false;
-    int nextUpdate;
-    boolean hasNext = false;
+    private boolean changed = false;
+    private  int nextUpdate;
+    private boolean hasNext = false;
 
     Field f;
 
