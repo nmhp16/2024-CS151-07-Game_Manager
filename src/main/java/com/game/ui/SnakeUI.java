@@ -6,6 +6,7 @@ import com.game.model.Snake.Block;
 import com.game.model.Snake.Field;
 import com.game.model.Snake.Snake;
 import com.game.service.HighScoresManager;
+
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.geometry.Insets;
@@ -23,19 +24,6 @@ import javafx.stage.Stage;
 
 public class SnakeUI extends Application {
 
-<<<<<<< Aarons-Branch
-        public static int block_size = 15;
-        int width = 70, height = 30;
-        int il = 2;
-
-    private long then = System.nanoTime();
-
-    private boolean changed = false;
-    private  int nextUpdate;
-    private boolean hasNext = false;
-
-    Field f;
-=======
         public static int block_size = 25;
         public static boolean isSnakeRunning = false;
         private int width = 45, height = 25;
@@ -57,7 +45,6 @@ public class SnakeUI extends Application {
                 this.username = username; // Initialize the username
                 this.highScoresManager = new HighScoresManager(); // Initialize highScoresManager
         }
->>>>>>> main
 
         /**
          * Start the game of snake, create the game window, toolbar, Field (snake game
