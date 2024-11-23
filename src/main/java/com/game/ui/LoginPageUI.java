@@ -20,6 +20,11 @@ public class LoginPageUI {
     private PasswordField passwordField;
     private Button loginButton;
     private Button createAccountButton;
+    // Styling
+    private String buttonStyle = "-fx-background-color: #4ca1af; -fx-text-fill: white; -fx-background-radius: 10px;";
+    private String buttonHoverStyle = "-fx-background-color: #3b8a9a; -fx-text-fill: white; -fx-background-radius: 10px;";
+    private String fieldStyle = "-fx-background-color: white; -fx-border-color: lightgrey; -fx-border-radius: 10px; -fx-background-radius: 10px;";
+    private String backgroundStyle = "-fx-background-color: linear-gradient(to bottom right, #34495e, #5bc0de);";
 
     public LoginPageUI(GameManagerController controller) {
         // Initialize UI Components
@@ -32,100 +37,33 @@ public class LoginPageUI {
         setupUI(controller);
     }
 
-    // Getters
+    /**
+     * Retrieves the login page layout.
+     *
+     * @return A BorderPane containing the login page UI components.
+     */
     public BorderPane getLoginPage() {
         return loginPage;
     }
 
+    /**
+     * Sets up the UI components for the login page and adds them to the BorderPane
+     * loginPage.
+     * 
+     * @param controller The GameManagerController to handle login and create
+     *                   account events.
+     */
     private void setupUI(GameManagerController controller) {
         // Center login page
-        GridPane gridPane = new GridPane();
-        gridPane.setAlignment(Pos.CENTER);
-        gridPane.setHgap(10); // Gap between columns
-        gridPane.setVgap(10); // Gap between rows
+        GridPane gridPane = createGridPane();
 
-        // Add icon for username and password
-        Label usernameIcon = new Label("👤");
-        usernameIcon.setFont(new Font(24));
-        usernameIcon.setTextFill(Color.WHITE);
-
-        Label passwordIcon = new Label("🔒");
-        passwordIcon.setFont(new Font(24));
-        passwordIcon.setTextFill(Color.WHITE);
-
-        // Create account element
-        Label username = new Label("Username");
-        username.setFont(new Font("Georgia", 20));
-        username.setTextFill(Color.WHITE);
-        usernameField.setPrefWidth(200);
-
-        Label password = new Label("Password");
-        password.setFont(new Font("Georgia", 20));
-        password.setTextFill(Color.WHITE);
-        passwordField.setPrefWidth(200);
-
-        // Styling
-        String buttonStyle = "-fx-background-color: #4ca1af; -fx-text-fill: white; -fx-background-radius: 10px;";
-        String fieldStyle = "-fx-background-color: white; -fx-border-color: lightgrey; -fx-border-radius: 10px; -fx-background-radius: 10px;";
-        usernameField.setStyle(fieldStyle);
-        passwordField.setStyle(fieldStyle);
+        addInputFields(gridPane);
 
         // Login Button
-        loginButton.setPrefWidth(200);
-        loginButton.setFont(new Font("Georgia", 20));
-        loginButton.setStyle(buttonStyle);
-        loginButton.setPrefSize(200, 40);
-
-        // Hover effect
-        loginButton.setOnMouseEntered(
-                event -> loginButton
-                        .setStyle("-fx-background-color: #3b8a9a; -fx-text-fill: white; -fx-background-radius: 10px;"));
-        loginButton.setOnMouseExited(
-                event -> loginButton.setStyle(buttonStyle));
-
-        // Hover effect when focused
-        loginButton.focusedProperty().addListener((observable, oldValue, newValue) -> {
-            if (newValue) {
-                loginButton.setStyle(
-                        "-fx-background-color: #3b8a9a; -fx-text-fill: white; -fx-background-radius: 10px;");
-            } else {
-                loginButton
-                        .setStyle(buttonStyle);
-            }
-        });
+        configureButton(loginButton);
 
         // Create Account Button
-        createAccountButton.setPrefWidth(200);
-        createAccountButton.setFont(new Font("Georgia", 20));
-        createAccountButton.setStyle(buttonStyle);
-        createAccountButton.setPrefSize(200, 40);
-
-        createAccountButton.setOnMouseEntered(
-                event -> createAccountButton
-                        .setStyle("-fx-background-color: #3b8a9a; -fx-text-fill: white; -fx-background-radius: 10px;"));
-        createAccountButton.setOnMouseExited(
-                event -> createAccountButton.setStyle(buttonStyle));
-
-        // Hover effect when focused
-        createAccountButton.focusedProperty().addListener((observable, oldValue, newValue) -> {
-            if (newValue) {
-                createAccountButton.setStyle(
-                        "-fx-background-color: #3b8a9a; -fx-text-fill: white; -fx-background-radius: 10px;");
-            } else {
-                createAccountButton
-                        .setStyle(buttonStyle);
-            }
-        });
-
-        // Put account element into Grid Pane in format (field, column, row)
-        gridPane.add(username, 1, 1);
-        gridPane.add(usernameIcon, 0, 2);
-        gridPane.add(usernameField, 1, 2);
-        gridPane.add(password, 1, 3);
-        gridPane.add(passwordIcon, 0, 4);
-        gridPane.add(passwordField, 1, 4);
-        gridPane.add(loginButton, 1, 6);
-        gridPane.add(createAccountButton, 1, 7);
+        configureButton(createAccountButton);
 
         // Create title for login page
         Label title = new Label("Game Manager Login");
@@ -137,7 +75,6 @@ public class LoginPageUI {
         vbox.setAlignment(Pos.CENTER);
         vbox.setPadding(new Insets(10));
 
-        String backgroundStyle = "-fx-background-color: linear-gradient(to bottom right, #2c3e50, #5bc0de);";
         loginPage.setStyle(backgroundStyle);
         loginPage.setCenter(vbox);
 
@@ -148,6 +85,109 @@ public class LoginPageUI {
         });
         createAccountButton.setOnAction(event -> {
             controller.handleCreateAccount(usernameField.getText(), passwordField.getText());
+        });
+    }
+
+    /**
+     * Creates and configures a GridPane for the login page layout.
+     * 
+     * @return A GridPane aligned to the center with specified horizontal and
+     *         vertical gaps.
+     */
+    private GridPane createGridPane() {
+        GridPane gridPane = new GridPane();
+        gridPane.setAlignment(Pos.CENTER);
+        gridPane.setHgap(10); // Gap between columns
+        gridPane.setVgap(10); // Gap between rows
+        return gridPane;
+    }
+
+    /**
+     * Adds input fields to the GridPane for the login page.
+     * 
+     * Adds icons for username and password, and creates labels for the fields.
+     * Puts the labels and fields into the GridPane in the specified format.
+     * 
+     * @param gridPane The GridPane to add the input fields to.
+     */
+    private void addInputFields(GridPane gridPane) {
+        // Add icon for username and password
+        Label usernameIcon = createIconLabel("👤");
+        Label passwordIcon = createIconLabel("🔒");
+
+        // Create account element
+        Label username = createFieldLabel("Username");
+        Label password = createFieldLabel("Password");
+
+        usernameField.setStyle(fieldStyle);
+        passwordField.setStyle(fieldStyle);
+
+        // Put account element into Grid Pane in format (field, column, row)
+        gridPane.add(username, 1, 1);
+        gridPane.add(usernameIcon, 0, 2);
+        gridPane.add(usernameField, 1, 2);
+        gridPane.add(password, 1, 3);
+        gridPane.add(passwordIcon, 0, 4);
+        gridPane.add(passwordField, 1, 4);
+        gridPane.add(loginButton, 1, 6);
+        gridPane.add(createAccountButton, 1, 7);
+    }
+
+    /**
+     * Creates a label with an icon represented by the given text.
+     *
+     * @param text The text representing the icon.
+     * @return A Label with the specified icon text, styled with a font size of 24
+     *         and white text color.
+     */
+    private Label createIconLabel(String text) {
+        Label label = new Label(text);
+        label.setFont(new Font(24));
+        label.setTextFill(Color.WHITE);
+        return label;
+    }
+
+    /**
+     * Creates a label with a given text for a field on the login page.
+     * 
+     * @param text The text of the label.
+     * @return A Label with the specified text, styled with the font "Georgia" with
+     *         size 20 and white text color.
+     */
+    private Label createFieldLabel(String text) {
+        Label label = new Label(text);
+        label.setFont(new Font("Georgia", 20));
+        label.setTextFill(Color.WHITE);
+        return label;
+    }
+
+    /**
+     * Configures the visual properties of a button, including its size, font, and
+     * style.
+     * Also adds a hover effect that changes the button's style when the mouse is
+     * over it,
+     * and a focus effect that changes the button's style when it is focused.
+     * 
+     * @param button The button to be configured.
+     */
+    private void configureButton(Button button) {
+        button.setPrefWidth(200);
+        button.setFont(new Font("Georgia", 20));
+        button.setStyle(buttonStyle);
+        button.setPrefSize(200, 40);
+
+        button.setOnMouseEntered(
+                event -> button.setStyle(buttonHoverStyle));
+        button.setOnMouseExited(
+                event -> button.setStyle(buttonStyle));
+
+        // Hover effect when focused
+        button.focusedProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue) {
+                button.setStyle(buttonHoverStyle);
+            } else {
+                button.setStyle(buttonStyle);
+            }
         });
     }
 }
