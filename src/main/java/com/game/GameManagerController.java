@@ -98,61 +98,37 @@ public class GameManagerController {
         vbox.setAlignment(Pos.CENTER);
         vbox.setPadding(new Insets(10));
 
-        // Elements to add to VBox
-        Label menuTitle = new Label("Main Menu");
-        menuTitle.setFont(new Font("Georgia", 30));
+        Label menuTitle = createMenuTitle(stage);
 
-        // Calculate font size based on both width and height
-        DoubleBinding fontSizeBinding = stage.widthProperty().multiply(0.05)
-                .add(stage.heightProperty().multiply(0.1))
-                .divide(2);
+        HBox contentBox = createMainContent(stage);
 
-        // Bind the style property to this combined font size
-        menuTitle.styleProperty().bind(fontSizeBinding.asString("-fx-font-family: 'Georgia'; -fx-font-size: %.0fpx;"));
+        // Add menu title and HBox to VBox
+        vbox.getChildren().addAll(menuTitle, contentBox);
 
-        // Dynamically scale padding with screen size
-        menuTitle.paddingProperty().bind(
-                Bindings.createObjectBinding(() -> {
-                    // Increase Bottom Padding as height increases, up to 200
-                    double BottomPadding = Math.min(1 + stage.heightProperty().get() / 5, 200);
+        // Add vbox to AnchorPane
+        mainMenu.getChildren().add(vbox);
 
-                    return new Insets(0, 0, BottomPadding, 0);
-                }, stage.heightProperty()));
+        // Anchor the VBox to all sides of the AnchorPane to center it
+        AnchorPane.setTopAnchor(vbox, 20.0); // Top margin
+        AnchorPane.setLeftAnchor(vbox, 20.0); // Left margin
+        AnchorPane.setRightAnchor(vbox, 20.0); // Right margin
+        AnchorPane.setBottomAnchor(vbox, 20.0); // Bottom margin
 
-        // Elements to add to Grid Pane
-        Label gameOptionsLabel = new Label("Select a Game");
-        gameOptionsLabel.setFont(new Font("Georgia", 25));
+        stage.setScene(new Scene(mainMenu, 900, 600));
+        stage.centerOnScreen();
+    }
 
-        Button playBlackjackButton = new Button("Play Blackjack");
-        playBlackjackButton.setFont(new Font("Georgia", 20));
-
-        Button playSnakeButton = new Button("Play Snake");
-        playSnakeButton.setFont(new Font("Georgia", 20));
-
-        // Set button size dynamically based on stage width
-        playBlackjackButton.prefWidthProperty().bind(stage.widthProperty().multiply(0.3)); // 30% of the stage width
-        playSnakeButton.prefWidthProperty().bind(stage.widthProperty().multiply(0.3)); // 30% of the stage width
-
-        // Bind button height dynamically based on stage height
-        playBlackjackButton.prefHeightProperty().bind(stage.heightProperty().multiply(0.1)); // 10% of the stage height
-        playSnakeButton.prefHeightProperty().bind(stage.heightProperty().multiply(0.1)); // 10% of the stage height
-
-        // Initialize Grid Pane
-        GridPane gameOptionsBox = new GridPane();
-        gameOptionsBox.setAlignment(Pos.CENTER);
-        gameOptionsBox.setHgap(10);
-        gameOptionsBox.setVgap(10);
-
-        gameOptionsBox.add(gameOptionsLabel, 1, 0);
-        gameOptionsBox.add(playBlackjackButton, 1, 2);
-        gameOptionsBox.add(playSnakeButton, 1, 4);
-
-        HBox hBox = new HBox();
-
-        // Dynamically scale spacing with window width
-        DoubleBinding spacingBinding = stage.widthProperty().multiply(0.3); // 30% of the width
-        hBox.spacingProperty().bind(spacingBinding);
-
+    /**
+     * Creates a VBox containing the top 5 high scores for both Blackjack and Snake
+     * games. The scores are sorted in descending order and displayed in a list with
+     * each score's username, score, and game name. The labels are dynamically bound
+     * to the stage width to ensure they fit within the given width. The VBox is
+     * returned for use in the main menu.
+     *
+     * @param stage The stage to bind the score labels to for dynamic font size
+     * @return VBox containing the top 5 high scores
+     */
+    private VBox createHighScoreBox(Stage stage) {
         // Get top 5 high scores for both games
         VBox scoreList = new VBox(10);
         scoreList.setAlignment(Pos.TOP_LEFT);
@@ -184,25 +160,116 @@ public class GameManagerController {
             scoreLabel.setFont(new Font("Georgia", 20));
             scoreList.getChildren().add(scoreLabel);
         }
+        return scoreList;
+    }
+
+    /**
+     * Creates a Label for the main menu title, dynamically scaling it according to
+     * the size of the stage.
+     * The font size is calculated based on both the width and the height of the
+     * stage.
+     * The padding is also dynamically updated to ensure the title is centered
+     * vertically.
+     * 
+     * @param stage The primary stage of the application
+     * @return The Label for the main menu title
+     */
+    private Label createMenuTitle(Stage stage) {
+        // Elements to add to VBox
+        Label menuTitle = new Label("Main Menu");
+        menuTitle.setFont(new Font("Georgia", 30));
+
+        // Calculate font size based on both width and height
+        DoubleBinding fontSizeBinding = stage.widthProperty().multiply(0.05)
+                .add(stage.heightProperty().multiply(0.1))
+                .divide(2);
+
+        // Bind the style property to this combined font size
+        menuTitle.styleProperty().bind(fontSizeBinding.asString("-fx-font-family: 'Georgia'; -fx-font-size: %.0fpx;"));
+
+        // Dynamically scale padding with screen size
+        menuTitle.paddingProperty().bind(
+                Bindings.createObjectBinding(() -> {
+                    // Increase Bottom Padding as height increases, up to 200
+                    double BottomPadding = Math.min(1 + stage.heightProperty().get() / 5, 200);
+
+                    return new Insets(0, 0, BottomPadding, 0);
+                }, stage.heightProperty()));
+
+        return menuTitle;
+    }
+
+    private HBox createMainContent(Stage stage) {
+        HBox hBox = new HBox();
+
+        // Dynamically scale spacing with window width
+        DoubleBinding spacingBinding = stage.widthProperty().multiply(0.3); // 30% of the width
+        hBox.spacingProperty().bind(spacingBinding);
+
+        GridPane gameOptionsBox = createGameOptionsBox(stage);
+
+        VBox scoreList = createHighScoreBox(stage);
 
         // Add game options and score list to HBox
         hBox.getChildren().addAll(gameOptionsBox, scoreList);
 
-        // Add menu title and HBox to VBox
-        vbox.getChildren().addAll(menuTitle, hBox);
+        return hBox;
+    }
 
-        // Add vbox to AnchorPane
-        mainMenu.getChildren().add(vbox);
+    /**
+     * Creates a GridPane containing buttons to play Blackjack and Snake,
+     * as well as a label to identify the options.
+     * 
+     * @param stage The stage to bind the button sizes to.
+     * @return The GridPane containing the game options.
+     */
+    private GridPane createGameOptionsBox(Stage stage) {
+        // Elements to add to Grid Pane
+        Label gameOptionsLabel = new Label("Select a Game");
+        gameOptionsLabel.setFont(new Font("Georgia", 25));
 
-        // Anchor the VBox to all sides of the AnchorPane to center it
-        AnchorPane.setTopAnchor(vbox, 20.0); // Top margin
-        AnchorPane.setLeftAnchor(vbox, 20.0); // Left margin
-        AnchorPane.setRightAnchor(vbox, 20.0); // Right margin
-        AnchorPane.setBottomAnchor(vbox, 20.0); // Bottom margin
+        Button playBlackjackButton = new Button("Play Blackjack");
+        playBlackjackButton.setFont(new Font("Georgia", 20));
 
-        stage.setScene(new Scene(mainMenu, 900, 600));
-        stage.centerOnScreen();
+        Button playSnakeButton = new Button("Play Snake");
+        playSnakeButton.setFont(new Font("Georgia", 20));
 
+        // Set button size dynamically based on stage width
+        playBlackjackButton.prefWidthProperty().bind(stage.widthProperty().multiply(0.3)); // 30% of the stage width
+        playSnakeButton.prefWidthProperty().bind(stage.widthProperty().multiply(0.3)); // 30% of the stage width
+
+        // Bind button height dynamically based on stage height
+        playBlackjackButton.prefHeightProperty().bind(stage.heightProperty().multiply(0.1)); // 10% of the stage height
+        playSnakeButton.prefHeightProperty().bind(stage.heightProperty().multiply(0.1)); // 10% of the stage height
+
+        // Initialize Grid Pane
+        GridPane gameOptionsBox = new GridPane();
+        gameOptionsBox.setAlignment(Pos.CENTER);
+        gameOptionsBox.setHgap(10);
+        gameOptionsBox.setVgap(10);
+
+        gameOptionsBox.add(gameOptionsLabel, 1, 0);
+        gameOptionsBox.add(playBlackjackButton, 1, 2);
+        gameOptionsBox.add(playSnakeButton, 1, 4);
+
+        setGameAction(playBlackjackButton, playSnakeButton);
+
+        return gameOptionsBox;
+    }
+
+    /**
+     * Sets the game action event handlers for the provided buttons.
+     * 
+     * @param playBlackjackButton Button to start the Blackjack game.
+     * @param playSnakeButton     Button to display options for the Snake game.
+     * 
+     *                            The "Play Blackjack" button initializes and starts
+     *                            a new Blackjack game.
+     *                            The "Play Snake" button presents an option to play
+     *                            the classic mode of Snake,
+     *                            initializing and starting the game upon selection.
+     */
+    private void setGameAction(Button playBlackjackButton, Button playSnakeButton) {
         // Event handler for "Play Blackjack" button
         playBlackjackButton.setOnAction(event -> {
             BlackjackUI blackjackGame = new BlackjackUI(username);
