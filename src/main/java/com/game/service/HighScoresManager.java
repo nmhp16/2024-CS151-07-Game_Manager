@@ -11,15 +11,13 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import com.game.model.HighScore;
 
 public class HighScoresManager {
-    private Map<String, Set<HighScore>> highScores; // Map of usernames and set of high scores
+    private Map<String, List<HighScore>> highScores; // Map of usernames and set of high scores
 
     /**
      * Default Constructor
@@ -56,7 +54,7 @@ public class HighScoresManager {
                 int score = Integer.parseInt(parts[1]);
                 String gameName = parts[2];
 
-                Set<HighScore> userScores = highScores.computeIfAbsent(username, k -> new HashSet<>());
+                List<HighScore> userScores = highScores.computeIfAbsent(username, k -> new ArrayList<>());
 
                 // Link userScores Set to highScores Map's Set
                 if (userScores == null) {
@@ -80,13 +78,13 @@ public class HighScoresManager {
     public void createDefaultScores(Map<String, String> accounts) {
 
         for (String username : accounts.keySet()) {
-            Set<HighScore> userScores = highScores.computeIfAbsent(username, k -> new HashSet<>());
+            List<HighScore> userScores = highScores.computeIfAbsent(username, k -> new ArrayList<>());
 
             // Retrieve existing scores or create new one
             if (highScores.containsKey(username)) {
                 userScores = highScores.get(username);
             } else {
-                userScores = new HashSet<>();
+                userScores = new ArrayList<>();
                 highScores.put(username, userScores);
             }
 
@@ -129,7 +127,7 @@ public class HighScoresManager {
      * Helper method to create default account and password to assign scores
      */
     private void createDefaultScores() {
-        Set<HighScore> defaultScores = new HashSet<>();
+        List<HighScore> defaultScores = new ArrayList<>();
 
         defaultScores.add(new HighScore("default", 1000, "Blackjack"));
         defaultScores.add(new HighScore("default", 1000, "Snake"));
@@ -152,7 +150,7 @@ public class HighScoresManager {
      */
     public void saveHighScores() {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter("high_scores.txt"))) {
-            for (Map.Entry<String, Set<HighScore>> entry : highScores.entrySet()) {
+            for (Map.Entry<String, List<HighScore>> entry : highScores.entrySet()) {
                 for (HighScore highScore : entry.getValue()) {
                     writer.write(highScore.toString());
                     writer.newLine();
@@ -166,7 +164,7 @@ public class HighScoresManager {
     public List<HighScore> getTopScores(String gameName, int limit) {
         List<HighScore> allScores = new ArrayList<>();
 
-        for (Set<HighScore> scores : highScores.values()) {
+        for (List<HighScore> scores : highScores.values()) {
             for (HighScore score : scores) {
                 if (score.getGamename().equals(gameName)) {
                     allScores.add(score);
@@ -194,7 +192,7 @@ public class HighScoresManager {
      */
     public void addHighScores(String username, HighScore highScore) {
         // Retrieve user's high score
-        Set<HighScore> userScores = highScores.computeIfAbsent(username, k -> new HashSet<>());
+        List<HighScore> userScores = highScores.computeIfAbsent(username, k -> new ArrayList<>());
 
         // Add new high score to user's set of scores
         userScores.add(highScore);
@@ -216,7 +214,7 @@ public class HighScoresManager {
         }
 
         // Update the user's score set with the sorted top scores
-        highScores.put(username, new HashSet<>(sortedScores));
+        highScores.put(username, new ArrayList<>(sortedScores));
 
         // Save the updated high scores to file
         saveHighScores();
