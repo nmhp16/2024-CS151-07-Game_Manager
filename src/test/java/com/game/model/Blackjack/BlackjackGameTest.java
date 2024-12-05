@@ -1,11 +1,7 @@
-package com.game.model;
+package com.game.model.Blackjack;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import com.game.model.Blackjack.BlackjackGame;
-import com.game.model.Blackjack.Card;
-import com.game.model.Blackjack.Player;
 
 import static org.junit.jupiter.api.Assertions.*;
 

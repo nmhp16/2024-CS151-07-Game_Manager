@@ -191,4 +191,56 @@ public class Block extends Rectangle {
     public void addPosY(int y) {
         this.posY += y;
     }
+
+    /**
+     * Returns the current direction of the block.
+     * 
+     * @return The direction of the block, represented as one of the
+     *         constants defined in the Block class (UP, RIGHT, DOWN, LEFT).
+     */
+    public int getDirection() {
+        return direction;
+    }
+
+    /**
+     * Returns the block that is connected to this block in the direction
+     * that this block is pointing. If this block is not pointing at any
+     * other block, this method returns null.
+     * 
+     * @return The block that this block is pointing at, or null if there is
+     *         no such block.
+     */
+    public Block getNext() {
+        return next;
+    }
+
+    /**
+     * Returns the block that is connected to this block in the opposite
+     * direction to the one that this block is pointing. If this block is
+     * not pointing at any other block, this method returns null.
+     * 
+     * @return The block that this block is pointing away from, or null if
+     *         there is no such block.
+     */
+    public Block getPrevious() {
+        return previous;
+    }
+
+    /**
+     * Gets the maximum x-coordinate of the block's position on the grid.
+     * 
+     * @return The maximum x-coordinate of the block's position on the grid.
+     */
+    public int getMaxX() {
+        return maxX;
+    }
+
+    /**
+     * Gets the maximum y-coordinate of the block's position on the grid.
+     * 
+     * @return The maximum y-coordinate of the block's position on the grid.
+     */
+    public int getMaxY() {
+        return maxY;
+    }
 }
