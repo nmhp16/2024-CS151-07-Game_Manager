@@ -10,7 +10,6 @@ import javafx.scene.paint.Color;
 
 public class Field extends Canvas {
     private int w, h;
-    private ArrayList<Block> blocks = new ArrayList<>();
     private Food f;
     private int score = 0;
     private Snake snake;
@@ -104,8 +103,8 @@ public class Field extends Canvas {
         drawGrid();
 
         // Draw the snake
-        for (int index = 0; index < blocks.size(); ++index) {
-            Block b = blocks.get(index);
+        for (int index = 0; index < snake.blocks.size(); ++index) {
+            Block b = snake.blocks.get(index);
             drawBlock(b); // Call drawBlock for each block
         }
 
@@ -264,7 +263,7 @@ public class Field extends Canvas {
     public void addSnake(Snake s) {
         this.snake = s;
         for (Block b : s.blocks) {
-            addBlock(b);
+            snake.addBlock(b);
         }
     }
 
@@ -277,43 +276,13 @@ public class Field extends Canvas {
      * block to the snake to extend it, and add new food to the game.
      */
     public void update() {
-        // Move each block (starting from the tail to the head)
-        for (int i = blocks.size() - 1; i > 0; i--) {
-            Block current = blocks.get(i);
-            Block previous = blocks.get(i - 1);
-            current.setPosX(previous.getPosX());
-            current.setPosY(previous.getPosY());
-            current.direction = previous.direction; // Update direction
-            current.previous = previous;
-            if (i < blocks.size() - 1) {
-                current.next = blocks.get(i + 1);
-            }
-        }
-
-        // Move the head based on its current direction
-        Block head = snake.head;
-        switch (head.direction) {
-            case Block.UP:
-                head.addPosY(-1);
-                break;
-            case Block.DOWN:
-                head.addPosY(1);
-                break;
-            case Block.LEFT:
-                head.addPosX(-1);
-                break;
-            case Block.RIGHT:
-                head.addPosX(1);
-                break;
-        }
-
-        head.previous = blocks.get(1);
+        snake.moveSnake();
 
         // If the snake eats food
         if (isEaten(f)) {
             score += 20;
             addFood(); // Add new food
-            addNewBlock(); // Add a new block at the tail to extend the snake
+            snake.grow(this); // Add a new block at the tail to extend the snake
         }
 
         draw(); // Redraw the game
@@ -363,7 +332,7 @@ public class Field extends Canvas {
             return true;
         }
 
-        for (Block b : blocks) {
+        for (Block b : snake.blocks) {
             if (b != snake.head) {
                 if (b.getPosX() == snake.head.getPosX() && b.getPosY() == snake.head.getPosY()) {
                     return true;
@@ -371,22 +340,6 @@ public class Field extends Canvas {
             }
         }
         return false;
-    }
-
-    /**
-     * Adds a new block to the snake by creating a new block at the position of the
-     * current tail and setting the tail to the new block. The new block is added
-     * to the list of blocks.
-     */
-    public void addNewBlock() {
-        Block b = new Block(snake.tail.getOldPosX(), snake.tail.getOldPosY(), snake.tail, null, this);
-        snake.tail.next = b;
-        snake.tail = b;
-        addBlock(b);
-    }
-
-    private void addBlock(Block b) {
-        blocks.add(b);
     }
 
     /**
