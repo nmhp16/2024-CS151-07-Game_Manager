@@ -62,4 +62,30 @@ public class Snake {
         return head.direction;
     }
 
+    /**
+     * Retrieves the head block of the snake.
+     * 
+     * @return The head block of the snake.
+     */
+    public Block getHead() {
+        return head;
+    }
+
+    /**
+     * Retrieves the tail block of the snake.
+     * 
+     * @return The tail block of the snake.
+     */
+    public Block getTail() {
+        return tail;
+    }
+
+    /**
+     * Retrieves the list of all blocks that make up the snake.
+     * 
+     * @return A list of all the blocks that make up the snake.
+     */
+    public ArrayList<Block> getBlocks() {
+        return blocks;
+    }
 }
