@@ -1,12 +1,13 @@
 package com.game.model.Snake;
 
-import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import javafx.scene.paint.Color;
 
 public class Snake {
 
-    protected ArrayList<Block> blocks = new ArrayList<Block>();
+    protected List<Block> blocks = new CopyOnWriteArrayList<Block>();
     protected Block head;
     protected Block tail;
 
@@ -85,7 +86,64 @@ public class Snake {
      * 
      * @return A list of all the blocks that make up the snake.
      */
-    public ArrayList<Block> getBlocks() {
+    public List<Block> getBlocks() {
         return blocks;
+    }
+
+    /**
+     * Grows the snake by adding a new block to the tail.
+     * 
+     * This method creates a new block with the same position as the tail's
+     * previous position, and sets that block as the new tail. It adds the
+     * new block to the list of blocks that make up the snake.
+     * 
+     * @param field The field that the snake is living in.
+     */
+    public void grow(Field field) {
+        Block b = new Block(tail.getOldPosX(), tail.getOldPosY(), tail, null, field);
+        tail.next = b;
+        tail = b;
+        blocks.add(b);
+    }
+
+    /**
+     * Adds a block to the list of blocks that make up the snake.
+     * 
+     * @param b The block to be added to the snake.
+     */
+    public void addBlock(Block b) {
+        blocks.add(b);
+    }
+
+    /**
+     * Moves the snake by shifting all its blocks to the position of the
+     * previous block, and then moving the head block to its new position
+     * based on its current direction.
+     */
+    public void moveSnake() {
+        for (int i = blocks.size() - 1; i > 0; i--) {
+            Block current = blocks.get(i);
+            Block previous = blocks.get(i - 1);
+            current.setPosX(previous.getPosX());
+            current.setPosY(previous.getPosY());
+            current.direction = previous.direction;
+            current.previous = previous;
+        }
+
+        // Move the head
+        switch (head.direction) {
+            case Block.UP:
+                head.addPosY(-1);
+                break;
+            case Block.DOWN:
+                head.addPosY(1);
+                break;
+            case Block.LEFT:
+                head.addPosX(-1);
+                break;
+            case Block.RIGHT:
+                head.addPosX(1);
+                break;
+        }
     }
 }
