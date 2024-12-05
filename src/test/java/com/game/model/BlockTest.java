@@ -1,8 +1,11 @@
-package com.game.model.Snake;
+package com.game.model;
 
 import javafx.application.Platform;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+
+import com.game.model.Snake.Block;
+import com.game.model.Snake.Field;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;

@@ -1,9 +1,13 @@
-package com.game.model.Snake;
+package com.game.model;
 
 import javafx.application.Platform;
 import javafx.scene.paint.Color;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+
+import com.game.model.Snake.Block;
+import com.game.model.Snake.Field;
+import com.game.model.Snake.Snake;
 
 import java.util.List;
 
