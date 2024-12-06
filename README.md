@@ -3,7 +3,6 @@
 ## Overview
 The **Game Manager** is a JavaFX-based application designed to demonstrate Object-Oriented Programming (OOP) principles, GUI design, and persistent storage techniques. It features two games: **Blackjack** and **Snake**. Users can log in, view high scores, play games, and save progress.
 
----
 
 ## Design
 
@@ -30,7 +29,6 @@ The **Game Manager** is a JavaFX-based application designed to demonstrate Objec
 6. **Game UI**:
    - Provides a user-friendly graphical interface for gameplay and navigation.
 
----
 
 ## Installation Instructions
 
@@ -119,7 +117,6 @@ The **Game Manager** is a JavaFX-based application designed to demonstrate Objec
   - The toolbar at the top of the application window includes a **Main Menu** button that allows you to return to the main menu at any time.
   - It is persistent across all game screens, so you can always navigate back easily.
 
----
 ## Contributions
 
 This project was developed by the following team members:
