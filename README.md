@@ -1,81 +1,129 @@
 # Game Manager
 
-
-
-# CS 151 Project 2 - Game Manager with Blackjack and Snake Game
-**Instructor:** Telvin Zhong  
-**Due Date:** Midnight on December 14, 2024  
-
 ## Overview
-In this project, we will create a JavaFX-based Game Manager application to manage two playable games: Blackjack and Snake. This project will focus on enhancing OOP (Object-Oriented Programming) skills, GUI design, and persistent storage. The Game Manager will allow user login, track high scores, and persist user data across sessions. This project is to be completed in groups of 3-4 students.
+The **Game Manager** is a JavaFX-based application designed to demonstrate Object-Oriented Programming (OOP) principles, GUI design, and persistent storage techniques. It features two games: **Blackjack** and **Snake**. Users can log in, view high scores, play games, and save progress.
 
-## Features
+---
 
-### Game Manager (20 Points)
-- **Login (5 points):**  
-  - Allows users to either log in or create an account.
-  - User credentials are stored in `user_accounts.txt` and persist across sessions.
+## Design
 
-- **High Scores (5 points):**  
-  - Tracks high scores for both games and stores them in `high_scores.txt`.
-  - Scores consist of `username` and `score` with a default starting score of 1000.
+### Key Components
 
-- **Main Menu/Launcher (5 points):**  
-  - Displays the top 5 high scores for each game.
-  - Provides options to start either Blackjack or Snake.
+1. **Game Manager**:
+   - Acts as the hub for user interactions, login, and game selection.
+   - Manages high scores, user profiles, and persistent storage.
 
-- **Toolbar (5 points):**  
-  - Persistent toolbar with a "Main Menu" button to navigate back to the main menu.
+2. **Blackjack**:
+   - A card game featuring one human player, three automated characters (two players + dealer), and betting mechanics.
+   - Includes save/load support for game progress.
 
-### Game 1: Blackjack (30 Points)
-- **Game Functionality (12 points):**  
-  - 1 human player and 3 automated characters (2 players + 1 dealer).
-  - Implements betting, hitting, standing, and busting.
-  - Game rounds reset with new player balances maintained.
+3. **Snake**:
+   - A classic arcade game with snake movement, food collection, and collision-based game over logic.
+   - Features a pause/resume function.
 
-- **Save State Support (8 points):**  
-  - Users can save and load game states with a `saveStateString` containing all relevant game data.
+4. **High Scores**:
+   - Tracks and displays the top 5 high scores for each game, stored in `high_scores.txt`.
 
-- **Graphical User Interface (10 points):**  
-  - Displays player cards, balances, and turn indicators.
-  - Interactive "Hit" and "Stand" buttons for human player actions.
+5. **User Management**:
+   - Enables user login and account creation, with credentials stored in `user_accounts.txt`.
 
-### Game 2: Snake Game (30 Points)
-- **Game Functionality (15 points):**  
-  - Snake movement controlled by arrow keys.
-  - Food spawns randomly and increases the snake's length and score.
-  - Game over triggered by wall or self-collision, with final score and restart options displayed.
+6. **Game UI**:
+   - Provides a user-friendly graphical interface for gameplay and navigation.
 
-- **Pause (2 points):**  
-  - Player can pause/resume with the Escape key.
+---
 
-- **Graphical User Interface (15 points):**  
-  - Game grid with clear borders and visible score counter.
-  - Snake segments grow visually, and food is distinct on the grid.
+## Installation Instructions
 
-### Object-Oriented Programming (10 Points)
-- **Abstraction, Polymorphism, and Inheritance:**  
-  - Classes should handle distinct game components with clear responsibility.
-  - Use polymorphism and inheritance where applicable (e.g., Player vs. Dealer in Blackjack).
-  - Encapsulation through methods like `moveSnake()` and `growSnake()`.
+1. **Clone the repository from GitHub:**  
+   ```bash
+   git clone https://github.com/nmhp16/2024-CS151-07-Game_Manager
+   ```
+2. **Navigate into the project directory**
+  ```bash
+   cd 2024-CS151-07-Game_Manager
+   ```
+3. **Compile the java files:**
+  ```bash
+   javac -d bin src/*.java
+   ```
+4. **Run the application:**
+  ```bash
+   java -cp bin src/GameManager
+   ```
 
-### Individual Contribution and Github Repository (10 Points)
-- **GitHub Repository:**  
-  - Make the repo private and invite instructors.
-  - README includes `Overview`, `Design`, `Installation Instructions`, `Usage`, and `Contributions`.
-  - Evident contribution from each team member via commits.
+## Usage
 
-## Extra Credit
-- **3 points:** UML Diagram for one game.
-- **4 points:** JUnit tests for game logic and component interactions.
-- **3 points:** Encryption for usernames, passwords, and save states.
+### 1. User Login and Profile Management
 
-## Grading
-- **Total:** 100 points + 10 points Extra Credit.
-
-## Hints
-- **GameController Class:**  
-  - Consider using a `GameController` class with an infinite loop to handle game logic and abstract common game steps.
+- **Login**: 
+  - When the application starts, you will be prompted to log in with your existing credentials or create a new account.
+  - If you already have an account, simply enter your username and password.
+  - If you're a new user, you can register by creating a username and password.
+  - User credentials are securely saved to a `user_accounts.txt` file for persistent access across sessions.
   
-## Submission
-- Submit via GitHub and ensure all contributions are made before the due date.
+- **Profile Management**: 
+  - After logging in, you can update your profile details (username, password).
+  - The system will store and retrieve these details for future logins.
+
+### 2. Main Menu
+
+- **Navigating the Main Menu**:
+  - Upon login, you'll be presented with the Main Menu, where you can select one of the two available games:
+    - **Blackjack**: Play a card game with automated characters (dealer and two players).
+    - **Snake**: Play the classic Snake game with real-time snake movement.
+  
+- **Viewing High Scores**:
+  - The Main Menu will display the top 5 high scores for both Blackjack and Snake games. These scores are stored in `high_scores.txt` and updated after each game.
+
+### 3. Playing Blackjack
+
+- **Game Flow**:
+  - Blackjack is played with a human player and three automated characters (dealer and two other players).
+  - The game will prompt you to place a bet before starting the round.
+  - You will receive two cards and can choose to **Hit** (draw another card) or **Stand** (keep your current cards).
+  - The goal is to get as close to 21 points as possible without exceeding it.
+  - If you choose to hit and your hand exceeds 21, you will bust and lose the bet.
+  
+- **Game Controls**:
+  - **Hit**: Draw another card.
+  - **Stand**: Keep your current hand and end your turn.
+  - **New Round**: Once a round is complete, the game will reset, and you can place a new bet for the next round.
+  - **Save/Load**: You can save the game state to resume later using the "Save" option, or load a previously saved game state.
+
+### 4. Playing Snake
+
+- **Game Flow**:
+  - The game is played by controlling a snake that grows longer as it eats food.
+  - The snake is controlled using the **arrow keys** (Up, Down, Left, Right).
+  - Every time the snake eats food, its length increases, and your score rises.
+  - The game ends if the snake collides with the wall or itself.
+  
+- **Game Controls**:
+  - **Arrow Keys**: Use the arrow keys to control the direction of the snake.
+  - **Pause/Resume**: Press the **Escape** key to pause or resume the game during gameplay.
+  - **Restart**: After the game is over, you can choose to restart and try to beat your high score.
+
+### 5. High Scores
+
+- **Tracking and Displaying High Scores**:
+  - The top 5 high scores for each game (Blackjack and Snake) are displayed in the Main Menu.
+  - After finishing a game, if your score is in the top 5, it will be added to the high score list.
+  - High scores are stored persistently in the `high_scores.txt` file.
+  
+- **Clearing High Scores**:
+  - You can clear or reset the high scores from the game settings, but be cautious as this will remove all recorded scores.
+
+### 6. Toolbar Navigation
+
+- **Toolbar**: 
+  - The toolbar at the top of the application window includes a **Main Menu** button that allows you to return to the main menu at any time.
+  - It is persistent across all game screens, so you can always navigate back easily.
+
+---
+## Contributions
+
+This project was developed by the following team members:
+- **Aaron Mundanilkunathil**:
+- **Huu Tinh Nguyen**:
+- **Aung Aung**:
+- **Nguyen Pham**:
