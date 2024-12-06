@@ -1,7 +1,6 @@
 package com.game.model.Snake;
 
 import java.io.File;
-import java.util.ArrayList;
 import com.game.ui.SnakeUI;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
