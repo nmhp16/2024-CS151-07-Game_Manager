@@ -33,7 +33,7 @@ The **Game Manager** is a JavaFX-based application designed to demonstrate Objec
 ## Installation Instructions
 
 1. **Clone the repository from GitHub:**  
-   ```bash
+  ```bash
    git clone https://github.com/nmhp16/2024-CS151-07-Game_Manager
    ```
 2. **Navigate into the project directory**
