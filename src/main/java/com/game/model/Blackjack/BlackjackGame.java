@@ -56,6 +56,35 @@ public class BlackjackGame {
     }
 
     /**
+     * Resets the game to its initial state by clearing all player hands, resetting
+     * the deck, and setting default values for bets and balances. Initializes hands
+     * for all players and sets the current turn to the human player.
+     */
+    public void resetGame() {
+        humanPlayer.resetHand(); // Reset human hand
+        dealer.resetHand(); // Reset dealer hand
+        player1.resetHand(); // Reset player 1 hand
+        player2.resetHand(); // Reset player 2 hand
+
+        deck.resetDeck(); // Reset deck
+
+        turn = "You";
+
+        // Set bet for player
+        humanPlayer.setBet(0); // User bet, taken from JavaFX input
+        player1.setBet(50); // Default bet for player 1
+        player2.setBet(100); // Default bet for player 2
+
+        initializeHands();
+
+        humanPlayer.setBalance(1000);
+        player1.setBalance(1000);
+        player2.setBalance(1000);
+        dealer.setBalance(1000);
+
+    }
+
+    /**
      * Method to get current player
      * 
      * @return String current turn player
