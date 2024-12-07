@@ -298,7 +298,7 @@ public class BlackjackUI extends Application {
             handlePlayerTurnWithDelay(stage, 16);
 
         } else if (playerName.equals("Dealer")) {
-            handlePlayerTurnWithDelay(stage, 17);
+            handlePlayerTurnWithDelay(stage, 18);
         }
     }
 
