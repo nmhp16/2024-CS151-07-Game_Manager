@@ -298,7 +298,7 @@ public class BlackjackUI extends Application {
             handlePlayerTurnWithDelay(stage, 16);
 
         } else if (playerName.equals("Dealer")) {
-            handlePlayerTurnWithDelay(stage, 18);
+            handlePlayerTurnWithDelay(stage, 17);
         }
     }
 
@@ -342,6 +342,14 @@ public class BlackjackUI extends Application {
             // Hand value < minHandValue and hand size < 5
             else if (currentPlayer.calculateHandValue() < minHandValue && currentPlayer.getHand().size() < 5) {
                 // Bot "Hit" if hand < minHandValue
+                currentPlayer.takeTurn(game.getDeck());
+                updateStatus(currentPlayer.getName() + " Hit!");
+            }
+
+            // Condition to hit at soft 17
+            else if (currentPlayer.calculateHandValue() == 17 && currentPlayer.getHand().size() == 2
+                    && (currentPlayer.getHand().get(0).getRank().equals("A")
+                            || currentPlayer.getHand().get(1).getRank().equals("A"))) {
                 currentPlayer.takeTurn(game.getDeck());
                 updateStatus(currentPlayer.getName() + " Hit!");
             }
