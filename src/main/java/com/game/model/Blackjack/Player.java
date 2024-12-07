@@ -17,7 +17,7 @@ public abstract class Player {
     public Player(String name) {
         this.name = name;
         this.hand = new ArrayList<>();
-        this.balance = 10000;
+        this.balance = 1000;
         this.bet = 0;
     }
 

@@ -22,6 +22,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
@@ -187,6 +188,7 @@ public class BlackjackUI extends Application {
      * @param stage Current primary stage
      */
     private void updateUI(Stage stage) {
+
         // Stop updateUI if game is not running
         if (isBlackjackRunning == false) {
             return;
@@ -196,7 +198,7 @@ public class BlackjackUI extends Application {
         Label turnLabel = createTurnLabel();
 
         // Create bet images layout in BorderPane, calculate result if session finished
-        BorderPane boardMiddle = createBetImagesLayout();
+        BorderPane boardMiddle = createBetImagesLayout(stage);
 
         // Create balance labels for players
         Label userBalanceLabel = createLabel("Your Balance: $" + game.getHumanPlayer().getBalance());
@@ -403,20 +405,36 @@ public class BlackjackUI extends Application {
         bet500.setPrefWidth(90);
 
         bet10.setOnAction(event -> {
-            game.getHumanPlayer().setBet(10);
-            updateUI(stage);
+            if (game.getHumanPlayer().getBalance() < 10) {
+                gameManagerController.showAlert("Error", "Insufficient balance!");
+            } else {
+                game.getHumanPlayer().setBet(10);
+                updateUI(stage);
+            }
         });
         bet50.setOnAction(event -> {
-            game.getHumanPlayer().setBet(50);
-            updateUI(stage);
+            if (game.getHumanPlayer().getBalance() < 50) {
+                gameManagerController.showAlert("Error", "Insufficient balance!");
+            } else {
+                game.getHumanPlayer().setBet(50);
+                updateUI(stage);
+            }
         });
         bet100.setOnAction(event -> {
-            game.getHumanPlayer().setBet(100);
-            updateUI(stage);
+            if (game.getHumanPlayer().getBalance() < 100) {
+                gameManagerController.showAlert("Error", "Insufficient balance!");
+            } else {
+                game.getHumanPlayer().setBet(100);
+                updateUI(stage);
+            }
         });
         bet500.setOnAction(event -> {
-            game.getHumanPlayer().setBet(500);
-            updateUI(stage);
+            if (game.getHumanPlayer().getBalance() < 500) {
+                gameManagerController.showAlert("Error", "Insufficient balance!");
+            } else {
+                game.getHumanPlayer().setBet(500);
+                updateUI(stage);
+            }
         });
 
         betBox.getChildren().addAll(betLabel, bet10, bet50, bet100, bet500);
@@ -512,7 +530,7 @@ public class BlackjackUI extends Application {
             // User have bet
             else {
                 // User don't take turn, skip to next turn
-                if (user.calculateHandValue() < 16) {
+                if (user.calculateHandValue() < 16 && user.getHand().size() < 5) {
                     gameManagerController.showAlert("Invalid!", "Make sure hand value at least 16!");
                 } else {
                     updateStatus("You stands!");
@@ -773,7 +791,7 @@ public class BlackjackUI extends Application {
      * 
      * @return BorderPane containing images
      */
-    private BorderPane createBetImagesLayout() {
+    private BorderPane createBetImagesLayout(Stage stage) {
         BorderPane boardMiddle = new BorderPane();
 
         // Display mage view for bet amount
@@ -788,6 +806,7 @@ public class BlackjackUI extends Application {
 
         // If session finished
         if (sessionFinished) {
+
             Label player1Result = createLabel(game.calculateResults(game.getPlayer1()));
             player1Result.setTextFill(Color.RED);
 
@@ -806,6 +825,11 @@ public class BlackjackUI extends Application {
             BorderPane.setAlignment(player1Result, Pos.CENTER_RIGHT);
             BorderPane.setAlignment(player2Result, Pos.CENTER_LEFT);
             BorderPane.setAlignment(userResult, Pos.CENTER);
+
+            // Display game over if balance <= 0
+            if (game.getHumanPlayer().getBalance() <= 0) {
+                displayGameOverScreen(stage);
+            }
 
         } else {
             // Set bet image location inside BorderPane boardMiddle
@@ -902,4 +926,56 @@ public class BlackjackUI extends Application {
         return playerInfo;
     }
 
+    /**
+     * Displays a game over screen with a message and an instruction to restart
+     * the game. The screen is set up with a new stage and shows a "Game Over"
+     * label along with a prompt to press ENTER for restarting. The game is
+     * restarted when the ENTER key is pressed.
+     */
+    private void displayGameOverScreen(Stage stage) {
+        Stage ps = new Stage();
+
+        AnchorPane root = new AnchorPane();
+
+        VBox gameOverLayout = new VBox(10);
+        gameOverLayout.setAlignment(Pos.CENTER);
+        gameOverLayout.setPadding(new Insets(20));
+
+        Label gameOverLabel = new Label("Game Over");
+        gameOverLabel.setFont(Font.font("Tahoma", 32));
+
+        Label restartInstruction = new Label("Press ENTER to restart or ESCAPE to exit");
+        restartInstruction.setFont(Font.font("Tahoma", 16));
+
+        Scene gameOverScene = new Scene(root, 600, 400);
+
+        gameOverScene.setOnKeyPressed(e -> {
+            if (e.getCode() == KeyCode.ENTER) {
+                sessionFinished = false;
+                game.resetGame();
+                updateUI(stage);
+                ps.close();
+
+            } else if (e.getCode() == KeyCode.ESCAPE) {
+                BlackjackUI blackjackUI = new BlackjackUI(username);
+                blackjackUI.start(stage);
+                ps.close();
+            }
+        });
+
+        gameOverLayout.getChildren().addAll(gameOverLabel, restartInstruction);
+        root.getChildren().addAll(gameOverLayout);
+
+        // Anchor gameOverLayout
+        AnchorPane.setBottomAnchor(gameOverLayout, 40.0);
+        AnchorPane.setLeftAnchor(gameOverLayout, 40.0);
+        AnchorPane.setRightAnchor(gameOverLayout, 40.0);
+        AnchorPane.setTopAnchor(gameOverLayout, 40.0);
+
+        ps.setScene(gameOverScene);
+        ps.setTitle("Game Over");
+        ps.setResizable(false);
+        ps.centerOnScreen();
+        ps.show();
+    }
 }

@@ -200,9 +200,9 @@ public class SnakeUI extends Application {
                 AnchorPane.setRightAnchor(toolbar, 0.0);
 
                 // Anchor gameOverLayout
-                AnchorPane.setBottomAnchor(gameOverLayout, 0.0);
-                AnchorPane.setLeftAnchor(gameOverLayout, 0.0);
-                AnchorPane.setRightAnchor(gameOverLayout, 0.0);
+                AnchorPane.setBottomAnchor(gameOverLayout, 40.0);
+                AnchorPane.setLeftAnchor(gameOverLayout, 40.0);
+                AnchorPane.setRightAnchor(gameOverLayout, 40.0);
                 AnchorPane.setTopAnchor(gameOverLayout, 40.0);
 
                 Scene gameOverScene = new Scene(root, block_size * width, block_size * height);
