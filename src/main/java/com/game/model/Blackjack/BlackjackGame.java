@@ -33,7 +33,6 @@ public class BlackjackGame {
         player1.addCard(deck.drawCard());
         player2.addCard(deck.drawCard());
         dealer.addCard(deck.drawCard());
-
     }
 
     /**
