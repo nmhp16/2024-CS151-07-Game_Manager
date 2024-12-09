@@ -40,7 +40,7 @@ The **Game Manager** is a JavaFX-based application designed to demonstrate Objec
   ```bash
    cd 2024-CS151-07-Game_Manager
    ```
-3. **Compile the java files:**
+3. **Compile the Java files:**
   ```bash
    javac -d bin src/*.java
    ```
@@ -71,12 +71,12 @@ The **Game Manager** is a JavaFX-based application designed to demonstrate Objec
     - **Snake**: Play the classic Snake game with real-time snake movement.
   
 - **Viewing High Scores**:
-  - The Main Menu will display the top 5 high scores for both Blackjack and Snake games. These scores are stored in `high_scores.txt` and updated after each game.
+  - The Main Menu will display the top 5 scores for Blackjack and Snake games. These scores are stored in `high_scores.txt` and updated after each game.
 
 ### 3. Playing Blackjack
 
 - **Game Flow**:
-  - Blackjack is played with a human player and three automated characters (dealer and two other players).
+  - Blackjack is played with a human player and three automated characters (a dealer and two other players).
   - The game will prompt you to place a bet before starting the round.
   - You will receive two cards and can choose to **Hit** (draw another card) or **Stand** (keep your current cards).
   - The goal is to get as close to 21 points as possible without exceeding it.
@@ -97,9 +97,9 @@ The **Game Manager** is a JavaFX-based application designed to demonstrate Objec
   - The game ends if the snake collides with the wall or itself.
   
 - **Game Controls**:
-  - **Arrow Keys**: Use the arrow keys to control the direction of the snake.
+  - **Arrow Keys**: Use the arrow keys to control the snake's direction.
   - **Pause/Resume**: Press the **Escape** key to pause or resume the game during gameplay.
-  - **Restart**: After the game is over, you can choose to restart and try to beat your high score.
+  - **Restart**: After the game, you can restart and try to beat your high score.
 
 ### 5. High Scores
 
@@ -107,9 +107,6 @@ The **Game Manager** is a JavaFX-based application designed to demonstrate Objec
   - The top 5 high scores for each game (Blackjack and Snake) are displayed in the Main Menu.
   - After finishing a game, if your score is in the top 5, it will be added to the high score list.
   - High scores are stored persistently in the `high_scores.txt` file.
-  
-- **Clearing High Scores**:
-  - You can clear or reset the high scores from the game settings, but be cautious as this will remove all recorded scores.
 
 ### 6. Toolbar Navigation
 
@@ -121,6 +118,13 @@ The **Game Manager** is a JavaFX-based application designed to demonstrate Objec
 
 This project was developed by the following team members:
 - **Aaron Mundanilkunathil**:
+   - Implemented the Snake game logic, including movement, growth, collision detection, and scoring system.
+   - Designed and developed the UI/UX components for the game.
 - **Huu Tinh Nguyen**:
+   - Conducted testing for the program functionalities and edge cases, ensuring code quality of both the Snake game and the Blackjack game.
+   - Implemented high score manager and password encryption for proper game handling.
 - **Aung Aung**:
+   - Designed the UML diagram for the Game Manager, mapping relationships between Game Manager, Snake game, Blackjack, and other modules.
+   - Worked on login manager and documentation for the program.
 - **Nguyen Pham**:
+   - worked on the integration of Blackjack game logic and its UI components with Game Manager.
