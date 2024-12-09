@@ -319,24 +319,13 @@ public class BlackjackUI extends Application {
             // If player have blackjack
             if (playerBlackjack) {
                 updateStatus(currentPlayer.getName() + " Blackjack!");
-
-                // If Dealer stop, don't go next turn
-                if (currentPlayer.getName().equals("Dealer")) {
-                    sessionFinished = true;
-                } else {
-                    game.nextTurn();
-                }
+                isSessionFinished();
             }
 
             // Player busts if hand value > 21
             else if (currentPlayer.calculateHandValue() > 21) {
                 updateStatus(currentPlayer.getName() + " Bust!");
-
-                if (currentPlayer.getName().equals("Dealer")) {
-                    sessionFinished = true;
-                } else {
-                    game.nextTurn();
-                }
+                isSessionFinished();
             }
 
             // Hand value < minHandValue and hand size < 5
@@ -347,9 +336,7 @@ public class BlackjackUI extends Application {
             }
 
             // Condition to hit at soft 17
-            else if (currentPlayer.calculateHandValue() == 17 && currentPlayer.getHand().size() == 2
-                    && (currentPlayer.getHand().get(0).getRank().equals("A")
-                            || currentPlayer.getHand().get(1).getRank().equals("A"))) {
+            else if (isSoftHand(currentPlayer)) {
                 currentPlayer.takeTurn(game.getDeck());
                 updateStatus(currentPlayer.getName() + " Hit!");
             }
@@ -358,19 +345,44 @@ public class BlackjackUI extends Application {
             else {
                 // Bot "Stand" if hand >= minHandValue
                 updateStatus(currentPlayer.getName() + " Stand!");
-
-                // If Dealer stop, don't go next turn
-                if (currentPlayer.getName().equals("Dealer")) {
-                    sessionFinished = true;
-                } else {
-                    game.nextTurn();
-                }
+                isSessionFinished();
             }
 
             updateUI(stage);
         });
         // Start pause transition
         pause.play();
+    }
+
+    /**
+     * Helper method to determine if the game session is finished
+     * 
+     * This method will check if the current player is the dealer. If the dealer is
+     * the current player, the game session is finished.
+     * If it is not finished, the game will move to the next turn.
+     */
+    private void isSessionFinished() {
+        if (game.getCurrentPlayer().getName().equals("Dealer")) {
+            sessionFinished = true;
+        } else {
+            game.nextTurn();
+        }
+    }
+
+    /**
+     * Helper method to determine if current player has a soft hand
+     * 
+     * A soft hand is when the first card is an Ace and the total hand value is 17
+     * (Ace + 6). If the player has a soft hand, they will be asked to hit again
+     * otherwise they will stand.
+     * 
+     * @param currentPlayer Current player to check
+     * @return True if soft hand, false otherwise
+     */
+    private boolean isSoftHand(Player currentPlayer) {
+        return currentPlayer.calculateHandValue() == 17 && currentPlayer.getHand().size() == 2
+                && (currentPlayer.getHand().get(0).getRank().equals("A")
+                        || currentPlayer.getHand().get(1).getRank().equals("A"));
     }
 
     /**
