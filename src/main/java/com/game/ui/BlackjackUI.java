@@ -314,44 +314,25 @@ public class BlackjackUI extends Application {
         pause.setOnFinished(event -> {
             Player currentPlayer = game.getCurrentPlayer();
 
-            boolean playerBlackjack = currentPlayer.calculateHandValue() == 21
-                    && currentPlayer.getHand().size() == 2;
-
-            // If player have blackjack
-            if (playerBlackjack) {
+            if (currentPlayer.calculateHandValue() == 21 && currentPlayer.getHand().size() == 2) {
                 updateStatus(currentPlayer.getName() + " Blackjack!");
                 isSessionFinished();
-            }
-
-            // Player busts if hand value > 21
-            else if (currentPlayer.calculateHandValue() > 21) {
+            } else if (currentPlayer.calculateHandValue() > 21) {
                 updateStatus(currentPlayer.getName() + " Bust!");
                 isSessionFinished();
-            }
-
-            // Hand value < minHandValue and hand size < 5
-            else if (currentPlayer.calculateHandValue() < minHandValue && currentPlayer.getHand().size() < 5) {
-                // Bot "Hit" if hand < minHandValue
+            } else {
+                // Delegate to the player's takeTurn method
                 currentPlayer.takeTurn(game.getDeck());
-                updateStatus(currentPlayer.getName() + " Hit!");
-            }
-
-            // Condition to hit at soft 17
-            else if (isSoftHand(currentPlayer)) {
-                currentPlayer.takeTurn(game.getDeck());
-                updateStatus(currentPlayer.getName() + " Hit!");
-            }
-
-            // Hand value >= minHandValue <= 21
-            else {
-                // Bot "Stand" if hand >= minHandValue
-                updateStatus(currentPlayer.getName() + " Stand!");
-                isSessionFinished();
+                if (currentPlayer.calculateHandValue() >= minHandValue) {
+                    updateStatus(currentPlayer.getName() + " Stand!");
+                    isSessionFinished();
+                } else {
+                    updateStatus(currentPlayer.getName() + " Hit!");
+                }
             }
 
             updateUI(stage);
         });
-        // Start pause transition
         pause.play();
     }
 
@@ -368,22 +349,6 @@ public class BlackjackUI extends Application {
         } else {
             game.nextTurn();
         }
-    }
-
-    /**
-     * Helper method to determine if current player has a soft hand
-     * 
-     * A soft hand is when the first card is an Ace and the total hand value is 17
-     * (Ace + 6). If the player has a soft hand, they will be asked to hit again
-     * otherwise they will stand.
-     * 
-     * @param currentPlayer Current player to check
-     * @return True if soft hand, false otherwise
-     */
-    private boolean isSoftHand(Player currentPlayer) {
-        return currentPlayer.calculateHandValue() == 17 && currentPlayer.getHand().size() == 2
-                && (currentPlayer.getHand().get(0).getRank().equals("A")
-                        || currentPlayer.getHand().get(1).getRank().equals("A"));
     }
 
     /**

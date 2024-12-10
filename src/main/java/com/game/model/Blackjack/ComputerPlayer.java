@@ -14,8 +14,9 @@ public class ComputerPlayer extends Player {
      */
     @Override
     public void takeTurn(Deck deck) {
-        Card card = deck.drawCard(); // Draw card and remove it from deck
-        addCard(card); // Add card to player hand
-
+        if (calculateHandValue() < 16 && getHand().size() < 5) {
+            Card card = deck.drawCard();
+            addCard(card);
+        }
     }
 }
