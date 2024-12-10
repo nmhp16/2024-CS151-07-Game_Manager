@@ -107,7 +107,7 @@ class BlackjackGameTest {
         game.getDealer().addCard(new Card("SPADES", "9", 9));
 
         String result = game.calculateResults(player);
-        assertEquals("You Lost!", result);
+        assertEquals("You Lose!", result);
     }
 
     @Test
