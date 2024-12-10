@@ -93,7 +93,7 @@ public abstract class Player {
      * @return True if valid
      *         False otherwise
      */
-    public boolean setHandFromString(String handString) {
+    public boolean setHandFromString(String handString, Deck deck) {
         hand.clear(); // Clear current hand;
 
         String[] cardStrings = handString.split(","); // Split by comma to get each card
@@ -116,6 +116,9 @@ public abstract class Player {
                 // Create new Card object
                 Card card = new Card(suit, rank, value);
                 hand.add(card);
+
+                // Remove card from deck
+                deck.removeCard(card);
             } else {
                 return false;
             }

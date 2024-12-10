@@ -186,22 +186,22 @@ public class BlackjackGame {
                         turn = value;
                         break;
                     case "humanCards":
-                        if (!humanPlayer.setHandFromString(value)) {
+                        if (!humanPlayer.setHandFromString(value, deck)) {
                             return false;
                         }
                         break;
                     case "player1Cards":
-                        if (!player1.setHandFromString(value)) {
+                        if (!player1.setHandFromString(value, deck)) {
                             return false;
                         }
                         break;
                     case "player2Cards":
-                        if (!player2.setHandFromString(value)) {
+                        if (!player2.setHandFromString(value, deck)) {
                             return false;
                         }
                         break;
                     case "dealerCards":
-                        if (!dealer.setHandFromString(value)) {
+                        if (!dealer.setHandFromString(value, deck)) {
                             return false;
                         }
                         break;
