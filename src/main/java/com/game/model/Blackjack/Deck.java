@@ -73,4 +73,12 @@ public class Deck {
         }
     }
 
+    /**
+     * Get the number of cards in the deck
+     * 
+     * @return Number of cards in the deck
+     */
+    public int getDeckSize() {
+        return cards.size();
+    }
 }
