@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 
 import com.game.model.Blackjack.BlackjackGame;
 import com.game.model.Blackjack.Card;
+import com.game.model.Blackjack.Deck;
 import com.game.model.Blackjack.Player;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -166,4 +167,98 @@ class BlackjackGameTest {
         assertEquals(false, game.loadGameState(invalidSaveState));
     }
 
+    @Test
+    void testTakeTurn() {
+        Deck deck = new Deck();
+        Player player = game.getHumanPlayer();
+        player.addCard(new Card("HEARTS", "7", 7));
+        player.addCard(new Card("CLUBS", "6", 6));
+        game.getDealer().addCard(new Card("DIAMONDS", "10", 10));
+        game.getDealer().addCard(new Card("SPADES", "9", 9));
+
+        player.takeTurn(deck);
+        assertEquals(3, player.getHand().size());
+        assertEquals(deck.getDeckSize(), 51);
+    }
+
+    @Test
+    void testGetHumanPlayer() {
+        Player player = game.getHumanPlayer();
+        assertEquals("You", player.getName());
+    }
+
+    @Test
+    void testGetPlayer1() {
+        Player player = game.getPlayer1();
+        assertEquals("Player 1", player.getName());
+    }
+
+    @Test
+    void testGetPlayer2() {
+        Player player = game.getPlayer2();
+        assertEquals("Player 2", player.getName());
+    }
+
+    @Test
+    void testGetDealer() {
+        Player player = game.getDealer();
+        assertEquals("Dealer", player.getName());
+    }
+
+    @Test
+    void testGetCurrentPlayer() {
+        game.nextTurn();
+        Player player = game.getCurrentPlayer();
+        assertEquals("Player 1", player.getName());
+    }
+
+    @Test
+    void testGetDeck() {
+        Deck deck = game.getDeck();
+        assertEquals(52, deck.getDeckSize());
+    }
+
+    @Test
+    void testDealerTakeTurn() {
+        Deck deck = new Deck();
+        Player player = game.getDealer();
+        player.addCard(new Card("HEARTS", "7", 7));
+        player.addCard(new Card("CLUBS", "6", 6));
+        player.takeTurn(deck);
+        assertEquals(3, player.getHand().size());
+        assertEquals(deck.getDeckSize(), 51);
+    }
+
+    @Test
+    void testSoft17TakeTurn() {
+        Deck deck = new Deck();
+        Player player = game.getDealer();
+        player.addCard(new Card("HEARTS", "A", 11));
+        player.addCard(new Card("CLUBS", "6", 6));
+        player.takeTurn(deck);
+        assertEquals(3, player.getHand().size());
+        assertEquals(deck.getDeckSize(), 51);
+    }
+
+    @Test
+    void testHard17TakeTurn() {
+        Deck deck = new Deck();
+        Player player = game.getDealer();
+        player.addCard(new Card("HEARTS", "K", 10));
+        player.addCard(new Card("CLUBS", "7", 7));
+        player.takeTurn(deck);
+        assertEquals(2, player.getHand().size());
+        assertEquals(deck.getDeckSize(), 52);
+    }
+
+    @Test
+    void testComputerTakeTurn() {
+        Deck deck = new Deck();
+        Player player = game.getPlayer1();
+        player.addCard(new Card("HEARTS", "K", 10));
+        player.addCard(new Card("CLUBS", "6", 6));
+        player.takeTurn(deck);
+        assertEquals(2, player.getHand().size());
+        assertEquals(deck.getDeckSize(), 52);
+    }
 }
