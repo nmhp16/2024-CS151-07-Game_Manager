@@ -70,8 +70,8 @@ public class PasswordHasher {
 
             // Compare entered hash to the stored hash
             return storedPasswordHash.equals(enteredHash);
-        } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException("Error verifying password", e);
+        } catch (NoSuchAlgorithmException | ArrayIndexOutOfBoundsException | NullPointerException e) {
+            return false;
         }
     }
 }

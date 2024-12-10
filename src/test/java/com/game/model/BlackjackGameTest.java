@@ -116,6 +116,54 @@ class BlackjackGameTest {
         String invalidSaveState = "invalid:data:here";
         assertEquals(false, game.loadGameState(invalidSaveState));
     }
-}
 
-/****** 1a1f586d-46e3-4843-a031-828e9cc53058 *******/
+    @Test
+    void testLoadGameStateInvalidTurn() {
+        // Test loading game state with invalid turn
+        String invalidSaveState = "turn:invalidTurn|...";
+        assertEquals(false, game.loadGameState(invalidSaveState));
+    }
+
+    @Test
+    void testLoadGameStateInvalidPlayer() {
+        // Test loading game state with invalid player
+        String invalidSaveState = "player:invalidPlayer|...";
+        assertEquals(false, game.loadGameState(invalidSaveState));
+    }
+
+    @Test
+    void testLoadGameStateInvalidBalance() {
+        // Test loading game state with invalid balance
+        String invalidSaveState = "balance:invalidBalance|...";
+        assertEquals(false, game.loadGameState(invalidSaveState));
+    }
+
+    @Test
+    void testLoadGameStateInvalidBet() {
+        // Test loading game state with invalid bet
+        String invalidSaveState = "bet:invalidBet|...";
+        assertEquals(false, game.loadGameState(invalidSaveState));
+    }
+
+    @Test
+    void testLoadGameStateInvalidHand() {
+        // Test loading game state with invalid hand
+        String invalidSaveState = "hand:invalidHand|...";
+        assertEquals(false, game.loadGameState(invalidSaveState));
+    }
+
+    @Test
+    void testLoadGameStateInvalidDeck() {
+        // Test loading game state with invalid deck
+        String invalidSaveState = "deck:invalidDeck|...";
+        assertEquals(false, game.loadGameState(invalidSaveState));
+    }
+
+    @Test
+    void testLoadGameStateInvalidCards() {
+        // Test loading game state with invalid cards
+        String invalidSaveState = "cards:invalidCards|...";
+        assertEquals(false, game.loadGameState(invalidSaveState));
+    }
+
+}
