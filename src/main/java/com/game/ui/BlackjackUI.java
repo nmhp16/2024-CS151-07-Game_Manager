@@ -157,6 +157,7 @@ public class BlackjackUI extends Application {
             String saveStateString = loadStateField.getText();
 
             if (!saveStateString.isEmpty() && game.loadGameState(saveStateString)) {
+                isBlackjackRunning = true;
                 updateUI(stage);
             } else {
                 gameManagerController.showAlert("Invalid Input", "Please enter a valid saved state string.");
@@ -582,6 +583,8 @@ public class BlackjackUI extends Application {
 
         // Event handler for save state
         saveButton.setOnAction(event -> {
+            isBlackjackRunning = false;
+
             // Create new Stage for save state dialog
             Stage saveStateStage = new Stage();
             saveStateStage.setTitle("Save Game State");
@@ -601,6 +604,9 @@ public class BlackjackUI extends Application {
             saveStateStage.setResizable(false);
             saveStateStage.show();
 
+            saveStateStage.setOnCloseRequest(event1 -> {
+                isBlackjackRunning = true;
+            });
         });
 
     }
