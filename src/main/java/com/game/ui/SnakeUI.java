@@ -140,6 +140,10 @@ public class SnakeUI extends Application {
                 scene.setOnKeyPressed(e -> {
                         f.requestFocus(); // Redirect focus back the game field
 
+                        if (e.getCode() == KeyCode.SPACE) {
+                                initPausePopup(ps);
+                                togglePause(timer);
+                        }
                         if (e.getCode() == KeyCode.ESCAPE) {
                                 initPausePopup(ps);
                                 togglePause(timer);
@@ -286,6 +290,9 @@ public class SnakeUI extends Application {
                 Scene pauseScene = new Scene(pauseLayout);
                 pauseScene.setOnKeyPressed(e -> {
                         if (e.getCode() == KeyCode.ESCAPE) {
+                                togglePause(null);
+                        }
+                        if (e.getCode() == KeyCode.SPACE) {
                                 togglePause(null);
                         }
 
