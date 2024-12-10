@@ -17,6 +17,7 @@ import javafx.scene.control.Label;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.layout.HBox;
 import javafx.scene.text.Font;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -115,7 +116,16 @@ public class SnakeUI extends Application {
                 };
                 timer.start();
 
-                gameVBox.getChildren().addAll(f, score);
+         
+                Label pauseLabel = new Label("Pause : Press SPACE");
+                pauseLabel.setPadding(new Insets(5));
+                pauseLabel.setFont(Font.font("Tahoma", 25)); 
+
+                HBox botHBox = new HBox();
+                botHBox.setSpacing(700);
+                botHBox.getChildren().addAll(pauseLabel, score);
+
+                gameVBox.getChildren().addAll(f, botHBox);
 
                 // Anchor the toolbar to the top of the AnchorPane
                 AnchorPane.setTopAnchor(toolbar, 0.0);
@@ -278,9 +288,12 @@ public class SnakeUI extends Application {
                 Label pauseLabel = new Label("Game Paused");
                 pauseLabel.setFont(Font.font("Tahoma", 24));
 
-                VBox pauseLayout = new VBox(pauseLabel);
+                Label unpauseLabel = new Label("Press SPACE to Resume");
+                unpauseLabel.setFont(Font.font("Tahoma", 18));
+
+                VBox pauseLayout = new VBox(10,pauseLabel,unpauseLabel);
                 pauseLayout.setSpacing(20);
-                pauseLayout.setPrefSize(200, 100);
+                pauseLayout.setPrefSize(300, 150);
 
                 pauseLayout.setAlignment(Pos.CENTER);
 
