@@ -55,4 +55,22 @@ public class Card {
     public String toString() {
         return rank + "-" + suit;
     }
+
+    /**
+     * Compares this card to another object for equality.
+     * 
+     * @param obj The object to compare to
+     * @return True if the object is a Card and has the same rank and suit as this
+     *         card.
+     *         False otherwise.
+     */
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof Card) {
+            Card other = (Card) obj;
+            return rank.equals(other.rank) && suit.equals(other.suit);
+        }
+        return false;
+    }
 }
