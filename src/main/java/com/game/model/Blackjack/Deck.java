@@ -57,4 +57,20 @@ public class Deck {
         }
     }
 
+    /**
+     * Removes a card from the deck if it exists in the deck. If the card is not
+     * found in the deck, nothing happens.
+     * 
+     * @param card The card to remove from the deck
+     */
+    public void removeCard(Card card) {
+        // Loop through the deck and remove the matching card
+        for (int i = 0; i < cards.size(); i++) {
+            if (cards.get(i).equals(card)) {
+                cards.remove(i);
+                break;
+            }
+        }
+    }
+
 }
