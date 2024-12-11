@@ -323,7 +323,7 @@ public class BlackjackUI extends Application {
             } else {
                 // Delegate to the player's takeTurn method
                 currentPlayer.takeTurn(game.getDeck());
-                if (currentPlayer.calculateHandValue() >= minHandValue) {
+                if (currentPlayer.calculateHandValue() >= minHandValue || currentPlayer.getHand().size() == 5) {
                     updateStatus(currentPlayer.getName() + " Stand!");
                     isSessionFinished();
                 } else {
@@ -540,6 +540,7 @@ public class BlackjackUI extends Application {
 
         // Event handler for stop
         stopButton.setOnAction(event -> {
+            isBlackjackRunning = false;
             gameManagerController.showAlert("Game Finished!", "Thanks for playing!");
             HighScore highScore = new HighScore(username, game.getHumanPlayer().getBalance(),
                     "Blackjack");

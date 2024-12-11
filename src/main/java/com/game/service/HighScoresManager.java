@@ -161,6 +161,18 @@ public class HighScoresManager {
         }
     }
 
+    /**
+     * Retrieves the top high scores for a specified game.
+     * 
+     * This method filters high scores based on the provided game name,
+     * sorts them in descending order, and returns a list of the top scores
+     * up to the specified limit.
+     * 
+     * @param gameName The name of the game for which top scores are requested.
+     * @param limit    The maximum number of top scores to return.
+     * @return A list of top high scores for the specified game, limited to the
+     *         given number.
+     */
     public List<HighScore> getTopScores(String gameName, int limit) {
         List<HighScore> allScores = new ArrayList<>();
 
@@ -208,13 +220,31 @@ public class HighScoresManager {
             }
         });
 
-        // If there are more than the allowed top scores (5), remove the extra
-        if (sortedScores.size() > 5) {
-            sortedScores = sortedScores.subList(0, 5);
+        // Limits for Blackjack and Snake
+        int blackJackLimit = 0;
+        int snakeLimit = 0;
+
+        // Iterate through the sorted scores and limit top 5 per game
+        List<HighScore> finalScores = new ArrayList<>();
+
+        for (HighScore score : sortedScores) {
+            if (score.getGamename().equals("Blackjack")) {
+                // Only add to finalScores if the Blackjack limit is less than or equal to 5
+                if (blackJackLimit < 5) {
+                    finalScores.add(score);
+                    blackJackLimit++;
+                }
+            } else if (score.getGamename().equals("Snake")) {
+                // Only add to finalScores if the Snake limit is less than or equal to 5
+                if (snakeLimit < 5) {
+                    finalScores.add(score);
+                    snakeLimit++;
+                }
+            }
         }
 
-        // Update the user's score set with the sorted top scores
-        highScores.put(username, new ArrayList<>(sortedScores));
+        // Update the user's score list with the top scores for each game
+        highScores.put(username, finalScores);
 
         // Save the updated high scores to file
         saveHighScores();
