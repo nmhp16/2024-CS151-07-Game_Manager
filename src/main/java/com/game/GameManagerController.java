@@ -1,6 +1,5 @@
 package com.game;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import com.game.model.HighScore;
@@ -119,48 +118,69 @@ public class GameManagerController {
     }
 
     /**
-     * Creates a VBox containing the top 5 high scores for both Blackjack and Snake
-     * games. The scores are sorted in descending order and displayed in a list with
-     * each score's username, score, and game name. The labels are dynamically bound
-     * to the stage width to ensure they fit within the given width. The VBox is
-     * returned for use in the main menu.
-     *
-     * @param stage The stage to bind the score labels to for dynamic font size
-     * @return VBox containing the top 5 high scores
+     * Creates a HBox with two VBoxes, one for Blackjack and one for Snake scores.
+     * Each VBox contains a title and the top 5 scores with the score label width
+     * bound to 20% of the stage width.
+     * 
+     * @param stage Primary stage
+     * @return HBox with two VBoxes containing top 5 scores for Blackjack and Snake
      */
     private VBox createHighScoreBox(Stage stage) {
-        // Get top 5 high scores for both games
-        VBox scoreList = new VBox(10);
-        scoreList.setAlignment(Pos.TOP_LEFT);
+        VBox vbox = new VBox(20);
+        vbox.setAlignment(Pos.CENTER_LEFT);
+
+        Label scoreListTitle = new Label("Top 5 Scores");
+        scoreListTitle.setFont(new Font("Georgia", 50));
+
+        HBox scoreList = new HBox(30); // Increased spacing between sections
+        scoreList.setAlignment(Pos.TOP_CENTER);
+
+        // VBox for Blackjack scores
+        VBox blackjackBox = new VBox(10);
+        blackjackBox.setAlignment(Pos.TOP_LEFT);
+
+        Label blackjackTitle = new Label("Blackjack");
+        blackjackTitle.setFont(new Font("Georgia", 30));
+        blackjackBox.getChildren().add(blackjackTitle);
 
         List<HighScore> blackjackScores = highScoresManager.getTopScores("Blackjack", 5);
-        List<HighScore> snakeScores = highScoresManager.getTopScores("Snake", 5);
+        int i = 1;
+        for (HighScore score : blackjackScores) {
 
-        // Combine both scores
-        List<HighScore> combinedScores = new ArrayList<>();
-        combinedScores.addAll(blackjackScores);
-        combinedScores.addAll(snakeScores);
-
-        // Sort the combined scores in descending order
-        combinedScores.sort((score1, score2) -> Integer.compare(score2.getScore(), score1.getScore()));
-
-        Label scoreTitle = new Label("Top 5 Scores");
-        scoreTitle.setFont(new Font("Georgia", 45));
-        scoreList.getChildren().add(scoreTitle);
-
-        // Add high score to VBox, only top 5 scores added
-        for (int i = 0; i < Math.min(5, combinedScores.size()); i++) {
-            HighScore score = combinedScores.get(i);
-
-            Label scoreLabel = new Label(
-                    score.getUsername() + ": " + score.getScore() + " (" + score.getGamename() + ")");
-
-            // Dynamically bind font size for each score label
-            scoreLabel.prefWidthProperty().bind(stage.widthProperty().multiply(0.3)); // 30% of the stage width
+            Label scoreLabel = new Label(i + ". " + score.getUsername() + ": " + score.getScore());
             scoreLabel.setFont(new Font("Georgia", 20));
-            scoreList.getChildren().add(scoreLabel);
+            scoreLabel.prefWidthProperty().bind(stage.widthProperty().multiply(0.2)); // 20% of stage width
+            blackjackBox.getChildren().add(scoreLabel);
+
+            i++;
         }
-        return scoreList;
+
+        // VBox for Snake scores
+        VBox snakeBox = new VBox(10);
+        snakeBox.setAlignment(Pos.TOP_LEFT);
+
+        Label snakeTitle = new Label("Snake");
+        snakeTitle.setFont(new Font("Georgia", 30));
+        snakeBox.getChildren().add(snakeTitle);
+
+        List<HighScore> snakeScores = highScoresManager.getTopScores("Snake", 5);
+        i = 1;
+
+        for (HighScore score : snakeScores) {
+
+            Label scoreLabel = new Label(i + ". " + score.getUsername() + ": " + score.getScore());
+            scoreLabel.setFont(new Font("Georgia", 20));
+            scoreLabel.prefWidthProperty().bind(stage.widthProperty().multiply(0.2)); // 20% of stage width
+            snakeBox.getChildren().add(scoreLabel);
+            i++;
+        }
+
+        // Add both VBoxes to the HBox
+        scoreList.getChildren().addAll(blackjackBox, snakeBox);
+
+        vbox.getChildren().addAll(scoreListTitle, scoreList);
+
+        return vbox;
     }
 
     /**
@@ -199,11 +219,20 @@ public class GameManagerController {
         return menuTitle;
     }
 
+    /**
+     * Creates an HBox containing a GridPane with options to play Blackjack or Snake
+     * and a VBox containing the top 5 high scores for both games. The spacing
+     * between
+     * the elements is dynamically scaled based on the stage width.
+     * 
+     * @param stage The stage to bind the spacing to.
+     * @return The HBox containing the game options and high scores.
+     */
     private HBox createMainContent(Stage stage) {
         HBox hBox = new HBox();
 
         // Dynamically scale spacing with window width
-        DoubleBinding spacingBinding = stage.widthProperty().multiply(0.3); // 30% of the width
+        DoubleBinding spacingBinding = stage.widthProperty().multiply(0.2); // 20% of the width
         hBox.spacingProperty().bind(spacingBinding);
 
         GridPane gameOptionsBox = createGameOptionsBox(stage);
