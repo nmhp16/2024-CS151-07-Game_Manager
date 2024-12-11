@@ -1,5 +1,5 @@
 # Game Manager
-![alt text](GameManager.png)
+
 ## Overview
 The **Game Manager** is a JavaFX-based application designed to demonstrate Object-Oriented Programming (OOP) principles, GUI design, and persistent storage techniques. It features two games: **Blackjack** and **Snake**. Users can log in, view high scores, play games, and save progress.
 
