@@ -404,4 +404,13 @@ public class Field extends Canvas {
     public Snake getSnake() {
         return snake;
     }
+
+    /**
+     * Sets the current score of the snake game.
+     * 
+     * @param score The new score of the snake game
+     */
+    public void setScore(int score) {
+        this.score = score;
+    }
 }

@@ -528,10 +528,14 @@ public class BlackjackUI extends Application {
 
         // Event handler for new round
         newRoundButton.setOnAction(event -> {
-            game.startNewRound();
-            sessionFinished = false;
-            updateStatus("Starting new round");
-            updateUI(stage);
+            if (!sessionFinished) {
+                gameManagerController.showAlert("Error", "Game is running!");
+            } else {
+                game.startNewRound();
+                sessionFinished = false;
+                updateStatus("Starting new round");
+                updateUI(stage);
+            }
         });
 
         // Event handler for stop
