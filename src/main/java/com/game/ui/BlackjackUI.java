@@ -314,7 +314,8 @@ public class BlackjackUI extends Application {
         pause.setOnFinished(event -> {
             Player currentPlayer = game.getCurrentPlayer();
 
-            if (currentPlayer.calculateHandValue() == 21 && currentPlayer.getHand().size() == 2) {
+            if (currentPlayer.calculateHandValue() == 21 && currentPlayer.getHand().size() == 2
+                    || currentPlayer.calculateHandValue() == 22 && currentPlayer.getHand().size() == 2) {
                 updateStatus(currentPlayer.getName() + " Blackjack!");
                 isSessionFinished();
             } else if (currentPlayer.calculateHandValue() > 21) {
@@ -496,6 +497,7 @@ public class BlackjackUI extends Application {
 
                         if (user.calculateHandValue() > 21) {
                             updateStatus(user.getName() + " Busted!");
+                            game.nextTurn();
                         }
                         updateUI(stage);
                     }
