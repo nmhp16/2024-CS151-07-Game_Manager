@@ -67,7 +67,7 @@ public class BlackjackUI extends Application {
         // Set status label
         statusLabel = new Label("Welcome to Blackjack!");
         statusLabel.setFont(new Font("Georgia", 30));
-        statusLabel.setTextFill(Color.RED);
+        statusLabel.setTextFill(Color.AQUAMARINE);
         statusLabel.setAlignment(Pos.CENTER);
 
         // Main root
@@ -630,7 +630,7 @@ public class BlackjackUI extends Application {
      * @param box VBox to highlight
      */
     private void highlightBox(VBox box) {
-        box.setStyle("-fx-border-color: blue; -fx-border-width: 3px;"); // Set blue border to highlight the box
+        box.setStyle("-fx-border-color: lightseagreen; -fx-border-width: 3px;"); // Set blue border to highlight the box
     }
 
     /**
@@ -806,18 +806,26 @@ public class BlackjackUI extends Application {
         if (sessionFinished) {
 
             Label player1Result = createLabel(game.calculateResults(game.getPlayer1()));
-            player1Result.setTextFill(Color.RED);
+            player1Result.setTextFill(Color.LIGHTGRAY);
+            player1Result.setFont(new Font("Georgia", 30));
 
             Label player2Result = createLabel(game.calculateResults(game.getPlayer2()));
-            player2Result.setTextFill(Color.RED);
+            player2Result.setTextFill(Color.LIGHTGRAY);
+            player2Result.setFont(new Font("Georgia", 30));
 
             Label userResult = createLabel(game.calculateResults(game.getHumanPlayer()));
-            userResult.setTextFill(Color.RED);
+            userResult.setTextFill(Color.LIGHTGRAY);
+            userResult.setFont(new Font("Georgia", 30));
+
+            Label newRoundLabel = createLabel("'New Round' to continue!");
+            newRoundLabel.setTextFill(Color.LIGHTGRAY);
+            newRoundLabel.setFont(new Font("Georgia", 30));
 
             // Set location for label
             boardMiddle.setRight(player1Result);
             boardMiddle.setLeft(player2Result);
             boardMiddle.setBottom(userResult);
+            boardMiddle.setCenter(newRoundLabel);
 
             // Alignment bet image view center inside BorderPane boardMiddle
             BorderPane.setAlignment(player1Result, Pos.CENTER_RIGHT);
