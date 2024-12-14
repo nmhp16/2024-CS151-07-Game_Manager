@@ -265,7 +265,7 @@ public class BlackjackGame {
      */
     private boolean isValidTurn(String value) {
         if (value.equalsIgnoreCase("You") || value.equalsIgnoreCase("Player 1")
-                || value.equalsIgnoreCase("Player 2")) {
+                || value.equalsIgnoreCase("Player 2") || value.equalsIgnoreCase("Dealer")) {
             return true;
         } else {
             return false;
