@@ -121,7 +121,7 @@ This project was developed by the following team members:
 - **Aaron Mundanilkunathil**:
    - Implemented the Snake game logic, including movement, growth, collision detection, and scoring system.
    - Designed and developed the UI/UX components for the game.
-- **Huu Tinh Nguyen**:
+- **Huu Tinh Han Nguyen**:
    - Conducted testing for the program functionalities and edge cases, ensuring code quality of both the Snake game and the Blackjack game.
    - Implemented high score manager and password encryption for proper game handling.
 - **Aung Aung**:
